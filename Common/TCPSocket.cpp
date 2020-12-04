@@ -5,13 +5,13 @@
 #include <cstdio>
 using namespace std;
 
-TCPSocket::TCPSocket(BaseServer *server)
+TCPSocket::TCPSocket(BaseServer *server, int type)
 {
     m_buffer = make_shared<Buffer>();
     m_server = server;
 }
 
-TCPSocket::TCPSocket(int fd, BaseServer *server, ReadFunctor rf)
+TCPSocket::TCPSocket(int fd, BaseServer *server, ReadFunctor rf, int type)
 {
     m_buffer = make_shared<Buffer>();
     m_server = server;

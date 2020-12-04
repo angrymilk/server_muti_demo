@@ -35,10 +35,13 @@ private:
     {
         int port;
         string ip;
-        int type;
     };
+    IpPort m_send_info;
     std::shared_ptr<BaseServer> m_server;
+    std::unordered_map<int, PlayerInfo> m_map_players;
+    std::unordered_map<string, int> m_uid_map;
     std::vector<IpPort> db_server_info;
+    std::vector<std::shared_ptr<TCPSocket>> m_clients;
     int db_server_num;
 };
 #endif

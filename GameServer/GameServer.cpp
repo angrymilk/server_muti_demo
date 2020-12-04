@@ -67,7 +67,7 @@ void GameServer::get_one_code(TCPSocket &con)
 
 void GameServer::regist(TCPSocket &con, std::string &data, int datasize)
 {
-    Reqest req;
+    RegisterMessageOn req;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, datasize);
     m_sql_server->query(("select user_name,user_password from PlayerInfo where user_name='" + req.name() + "';").c_str());
     std::map<std::string, std::map<std::string, std::string>> password = m_sql_server->parser();

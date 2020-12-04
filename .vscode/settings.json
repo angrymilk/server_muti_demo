@@ -42,6 +42,10 @@
         "utility": "cpp",
         "typeinfo": "cpp",
         "algorithm": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "unordered_set": "cpp",
+        "cstddef": "cpp",
+        "string_view": "cpp",
+        "string": "cpp"
     }
 }

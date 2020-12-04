@@ -1,0 +1,114 @@
+syntax = "proto2";
+
+//Reqest_Message
+message Reqest {
+  required string Name = 1;
+  required string Password = 2;
+  required string Message = 3;
+}
+
+message Response{
+  required int32 Uid = 1;                        //玩家的id
+  required int32 Ack = 2; 
+}
+
+message Modelinfo
+{
+  required int32 Modeltype = 1;
+  repeated int32 Attributetype = 2;
+  repeated int32 Attributetypevalue = 3;
+}
+
+//客户端物品操作请求
+message Addreq
+{
+  required int32 Eltemtype = 1;                  //物品类型金钱，道具，消耗品
+  required int32 Value = 2;                      //增加的物品种数
+  required int32 Uid = 3;                        //哪个玩家id的对应操作
+  required int32 Id = 4;                         //物品的id类型
+  optional bool Usemoney = 5;                    //道具或者消耗品是不是通过金钱获取的
+  optional int32 Pos = 6;                        //在背包的放置位置
+  optional bool Inuse = 7;                       //道具是扔了还是从背包中拿出使用
+  optional bool Dropfrom = 8;                    //道具从使用中丢弃还是直接从背包中丢弃
+  repeated Modelinfo Mode = 9;
+}
+
+//客户端物品查询请求
+message Packagereq
+{
+  required int32 Uid = 1;                 //玩家id
+  required int32 Init = 2;                //0:代表不需要进行任何数据库的数据读取  1:代表需要从redis中读取数据   2:表示需要从数据库中读取数据
+}
+
+message Attributeitempro
+{
+  required int32 Id = 1;
+  optional int32 Amount = 2;
+  optional int32 Eltemtype = 3;
+  repeated int32 attribute = 4;
+}
+
+message Packagepro
+{
+  repeated Attributeitempro Itempro = 1;
+}
+
+message Redisplayerinfo
+{
+  required int32 Hp = 1;
+  required int32 Attack = 2;
+  required int32 Id = 3;
+  repeated Attributeitempro Inuse = 4;
+  optional Packagepro Package = 5;
+}
+
+//0
+message RegisterMessageOn
+{
+  required string Username;
+  required string Password;
+}
+
+//1
+message RegisterMessageBack
+{
+  required string IpAddr;
+  required int Port;
+  required Uid;
+}
+
+//2
+message RegisterMessageGateBack
+{
+  required string IpAddr;
+  required int32 Port;
+  required int32 Uid;
+  required string Password;
+}
+
+//3
+message ClientDataQueryMessage
+{
+  required int32 Uid = 1;                 //玩家id
+  required int32 Init = 2;                
+}
+
+//4
+message ClientDataChangeMessage
+{
+  required int32 Eltemtype = 1;                  //物品类型金钱，道具，消耗品
+  required int32 Value = 2;                      //增加的物品种数
+  required int32 Uid = 3;                        //哪个玩家id的对应操作
+  required int32 Id = 4;                         //物品的id类型
+  optional bool Usemoney = 5;                    //道具或者消耗品是不是通过金钱获取的
+  optional int32 Pos = 6;                        //在背包的放置位置
+  optional bool Inuse = 7;                       //道具是扔了还是从背包中拿出使用
+  optional bool Dropfrom = 8;                    //道具从使用中丢弃还是直接从背包中丢弃
+  repeated Modelinfo Mode = 9;
+}
+
+//5
+message ClientMoveMessage
+{
+  
+}

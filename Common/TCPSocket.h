@@ -48,6 +48,7 @@ public:
 
 protected:
     int m_fd;
+    int m_type;
     ReadFunctor m_read_callback;
     //receiving buffer
     int m_thread_id;
