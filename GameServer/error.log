@@ -1,0 +1,212 @@
+g++ -fPIC -O2 -Wall -std=c++11 -Wno-deprecated -Wno-unused-parameter -L/usr/lib64/ -g -Wno-unused-variable -Wno-unused-function -L/usr/lib64/ `pkg-config --cflags --libs protobuf`  -Lpthread -std=c++11 -I../Common -I../Package -c GameServer.cpp -o .objs/GameServer.o
+In file included from ../Package/Money.h:3:0,
+                 from ../Package/Package.h:3,
+                 from Player.h:9,
+                 from GameServer.h:5,
+                 from GameServer.cpp:1:
+../Package/Item.h: In constructor ‘AbstractItem::AbstractItem(EltemType, int)’:
+../Package/Item.h:48:15: warning: ‘AbstractItem::m_eltem_type’ will be initialized after [-Wreorder]
+     EltemType m_eltem_type;
+               ^~~~~~~~~~~~
+../Package/Item.h:46:9: warning:   ‘int AbstractItem::m_count’ [-Wreorder]
+     int m_count;
+         ^~~~~~~
+../Package/Item.h:24:5: warning:   when initialized here [-Wreorder]
+     AbstractItem(EltemType eltem_type, int id) : m_eltem_type(eltem_type),
+     ^~~~~~~~~~~~
+../Package/Item.h:46:9: warning: ‘AbstractItem::m_count’ will be initialized after [-Wreorder]
+     int m_count;
+         ^~~~~~~
+../Package/Item.h:45:10: warning:   ‘bool AbstractItem::m_save’ [-Wreorder]
+     bool m_save;
+          ^~~~~~
+../Package/Item.h:24:5: warning:   when initialized here [-Wreorder]
+     AbstractItem(EltemType eltem_type, int id) : m_eltem_type(eltem_type),
+     ^~~~~~~~~~~~
+../Package/Item.h: In constructor ‘Item::Item(ItemInfo)’:
+../Package/Item.h:57:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+         for (int i = 0; i < info.mmotype.size(); i++)
+                         ~~^~~~~~~~~~~~~~~~~~~~~
+../Package/Item.h: In constructor ‘ItemAttribute::ItemAttribute(std::shared_ptr<Item>, std::vector<EltemAttributeType>, std::vector<int>)’:
+../Package/Item.h:84:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+         for (int i = 0; i < info.size(); i++)
+                         ~~^~~~~~~~~~~~~
+In file included from GameServer.h:8:0,
+                 from GameServer.cpp:1:
+../Common/RedisServer.h: In constructor ‘RedisServer::RedisServer(const string&, int)’:
+../Common/RedisServer.h:110:9: warning: ‘RedisServer::m_port’ will be initialized after [-Wreorder]
+     int m_port;
+         ^~~~~~
+../Common/RedisServer.h:108:11: warning:   ‘char* RedisServer::m_pcmd’ [-Wreorder]
+     char *m_pcmd;
+           ^~~~~~
+../Common/RedisServer.h:13:5: warning:   when initialized here [-Wreorder]
+     RedisServer(const std::string &ip, int port) : m_ip(ip), m_port(port), m_pcmd(new char[20])
+     ^~~~~~~~~~~
+../Common/RedisServer.h: In member function ‘int RedisServer::Restart()’:
+../Common/RedisServer.h:50:5: warning: no return statement in function returning non-void [-Wreturn-type]
+     }
+     ^
+../Common/RedisServer.h: In member function ‘int RedisServer::SetByBit(const string&, void*, int)’:
+../Common/RedisServer.h:90:56: warning: unknown conversion type character ‘b’ in format [-Wformat=]
+         snprintf(m_pcmd, 20, "SET %s \%b", _key.c_str());
+                                                        ^
+GameServer.cpp: In member function ‘int GameServer::on_message(TCPSocket&)’:
+GameServer.cpp:25:1: warning: no return statement in function returning non-void [-Wreturn-type]
+ }
+ ^
+GameServer.cpp: In member function ‘void GameServer::regist(TCPSocket&, std::__cxx11::string&, int)’:
+GameServer.cpp:71:39: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
+                                       ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp:75:60: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     res.SerializePartialToArray(data_ + temp, res.ByteSize());
+                                                            ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp: In member function ‘void GameServer::solve_add(TCPSocket&, std::__cxx11::string&, int)’:
+GameServer.cpp:145:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+     for (int i = 0; i > vec.size(); i++)
+                     ~~^~~~~~~~~~~~
+GameServer.cpp:147:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+         for (int j = 0; j < vec[i].size(); j++)
+                         ~~^~~~~~~~~~~~~~~
+GameServer.cpp:167:51: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     tmp.SerializePartialToArray(out, tmp.ByteSize());
+                                                   ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp:168:53: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     m_redis_server->SetByBit(key, out, tmp.ByteSize());
+                                                     ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp:175:39: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
+                                       ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp:180:60: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     res.SerializePartialToArray(data_ + temp, res.ByteSize());
+                                                            ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp: In member function ‘void GameServer::solve_query(TCPSocket&, std::__cxx11::string&, int)’:
+GameServer.cpp:223:39: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
+                                       ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+GameServer.cpp:228:60: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     res.SerializePartialToArray(data_ + temp, res.ByteSize());
+                                                            ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h:33:0,
+                 from /usr/include/c++/7/bits/allocator.h:46,
+                 from /usr/include/c++/7/bits/stl_tree.h:64,
+                 from /usr/include/c++/7/map:60,
+                 from ../Common/BaseServer.h:3,
+                 from GameServer.h:3,
+                 from GameServer.cpp:1:
+/usr/include/c++/7/ext/new_allocator.h: In instantiation of ‘void __gnu_cxx::new_allocator<_Tp>::construct(_Up*, _Args&& ...) [with _Up = Player; _Args = {Player*}; _Tp = Player]’:
+/usr/include/c++/7/bits/alloc_traits.h:475:4:   required from ‘static void std::allocator_traits<std::allocator<_Tp1> >::construct(std::allocator_traits<std::allocator<_Tp1> >::allocator_type&, _Up*, _Args&& ...) [with _Up = Player; _Args = {Player*}; _Tp = Player; std::allocator_traits<std::allocator<_Tp1> >::allocator_type = std::allocator<Player>]’
+/usr/include/c++/7/bits/shared_ptr_base.h:526:39:   required from ‘std::_Sp_counted_ptr_inplace<_Tp, _Alloc, _Lp>::_Sp_counted_ptr_inplace(_Alloc, _Args&& ...) [with _Args = {Player*}; _Tp = Player; _Alloc = std::allocator<Player>; __gnu_cxx::_Lock_policy _Lp = (__gnu_cxx::_Lock_policy)2]’
+/usr/include/c++/7/bits/shared_ptr_base.h:637:4:   required from ‘std::__shared_count<_Lp>::__shared_count(std::_Sp_make_shared_tag, _Tp*, const _Alloc&, _Args&& ...) [with _Tp = Player; _Alloc = std::allocator<Player>; _Args = {Player*}; __gnu_cxx::_Lock_policy _Lp = (__gnu_cxx::_Lock_policy)2]’
+/usr/include/c++/7/bits/shared_ptr_base.h:1295:35:   required from ‘std::__shared_ptr<_Tp, _Lp>::__shared_ptr(std::_Sp_make_shared_tag, const _Alloc&, _Args&& ...) [with _Alloc = std::allocator<Player>; _Args = {Player*}; _Tp = Player; __gnu_cxx::_Lock_policy _Lp = (__gnu_cxx::_Lock_policy)2]’
+/usr/include/c++/7/bits/shared_ptr.h:344:64:   required from ‘std::shared_ptr<_Tp>::shared_ptr(std::_Sp_make_shared_tag, const _Alloc&, _Args&& ...) [with _Alloc = std::allocator<Player>; _Args = {Player*}; _Tp = Player]’
+/usr/include/c++/7/bits/shared_ptr.h:690:14:   required from ‘std::shared_ptr<_Tp> std::allocate_shared(const _Alloc&, _Args&& ...) [with _Tp = Player; _Alloc = std::allocator<Player>; _Args = {Player*}]’
+/usr/include/c++/7/bits/shared_ptr.h:706:39:   required from ‘std::shared_ptr<_Tp> std::make_shared(_Args&& ...) [with _Tp = Player; _Args = {Player*}]’
+GameServer.cpp:62:110:   required from here
+/usr/include/c++/7/ext/new_allocator.h:136:4: error: invalid conversion from ‘Player*’ to ‘int’ [-fpermissive]
+  { ::new((void *)__p) _Up(std::forward<_Args>(__args)...); }
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from GameServer.h:5:0,
+                 from GameServer.cpp:1:
+Player.h:14:14: note:   initializing argument 1 of ‘Player::Player(int)’
+     explicit Player(int uin)
+              ^~~~~~
+Makefile:50: recipe for target '.objs/GameServer.o' failed
+make: *** [.objs/GameServer.o] Error 1
