@@ -140,7 +140,7 @@ int BaseServer::epoll_recv()
         {
             wake_up_read();
         }
-        else
+        else if (pstSocket->type() == 1)
         {
             int ret = pstSocket->process_data();
             if (ret == -3)
@@ -153,6 +153,9 @@ int BaseServer::epoll_recv()
                 printf("[Common][BaseServer.cpp:%d][ERROR]:socket process_data failed fd:%d\n", __LINE__, pstSocket->get_fd());
                 return ret;
             }
+        }
+        else if (pstSocket->type() == 2)
+        {
         }
     }
     //epoll处理完成之后进行对应的io task的任务读取

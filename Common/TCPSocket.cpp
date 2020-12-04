@@ -9,6 +9,7 @@ TCPSocket::TCPSocket(BaseServer *server, int type)
 {
     m_buffer = make_shared<Buffer>();
     m_server = server;
+    m_type = type;
 }
 
 TCPSocket::TCPSocket(int fd, BaseServer *server, ReadFunctor rf, int type)
@@ -17,6 +18,7 @@ TCPSocket::TCPSocket(int fd, BaseServer *server, ReadFunctor rf, int type)
     m_server = server;
     m_fd = fd;
     m_read_callback = rf;
+    m_type = type;
 }
 
 TCPSocket::~TCPSocket()
@@ -36,6 +38,11 @@ void TCPSocket::close_socket()
     }
     close(m_fd);
     m_fd = -1;
+}
+
+int get_type()
+{
+    return m_type;
 }
 
 int TCPSocket::recv_data()

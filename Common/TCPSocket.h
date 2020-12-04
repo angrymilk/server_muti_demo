@@ -43,6 +43,8 @@ public:
 
     void set_socket_fd(int fd);
 
+    int get_type();
+
     int send(Functor temp);
     std::shared_ptr<Buffer> m_buffer;
 
