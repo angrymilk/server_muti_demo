@@ -94,7 +94,7 @@ int BaseServer::init()
     }
 
     m_sockets_map[m_server_socket->get_fd()] = m_server_socket;
-    m_sockets_map[m_wake_fd] = make_shared<TCPSocket>(this);
+    m_sockets_map[m_wake_fd] = make_shared<TCPSocket>(this, 1);
     m_sockets_map[m_wake_fd]->set_socket_fd(m_wake_fd);
     return success;
 }
@@ -102,6 +102,29 @@ int BaseServer::init()
 void BaseServer::set_read_callback(TCPSocket::ReadFunctor read_func)
 {
     m_read_func = read_func;
+}
+
+int BaseServer::add_client_socket(int client_port, std::string client_ip, int server_port, std::string server_ip)
+{
+    int ret = 0;
+
+    std::shared_ptr<TCPSocket> conn_socket = make_shared<TCPSocket>(this, 2);
+    ret = conn_socket->open_as_client(const_cast<char *>(client_ip.c_str()), client_port, 10024);
+    int tmpIp;
+    ret = ip_string_to_addr(const_cast<char *>(server_ip.c_str()), tmpIp);
+    if (ret)
+        return ret;
+
+    ret = conn_socket->connect_to(tmpIp, server_port, true, 100000000);
+    if (ret)
+        return ret;
+
+    if (m_epoll.epoll_add(conn_socket->get_fd()) < 0)
+    {
+        printf("m_epoll.epoll_add fd:%d failed\n", conn_socket->get_fd());
+        return fail;
+    }
+    m_sockets_map[conn_socket->get_fd()] = conn_socket;
 }
 
 int BaseServer::epoll_recv()
@@ -128,7 +151,7 @@ int BaseServer::epoll_recv()
                 continue;
             }
 
-            m_sockets_map[accepted_sockfd] = make_shared<TCPSocket>(accepted_sockfd, this, m_read_func);
+            m_sockets_map[accepted_sockfd] = make_shared<TCPSocket>(accepted_sockfd, this, m_read_func, 1);
 
             if (m_epoll.epoll_add(accepted_sockfd) < 0)
             {
@@ -140,7 +163,7 @@ int BaseServer::epoll_recv()
         {
             wake_up_read();
         }
-        else if (pstSocket->type() == 1)
+        else
         {
             int ret = pstSocket->process_data();
             if (ret == -3)
@@ -153,9 +176,6 @@ int BaseServer::epoll_recv()
                 printf("[Common][BaseServer.cpp:%d][ERROR]:socket process_data failed fd:%d\n", __LINE__, pstSocket->get_fd());
                 return ret;
             }
-        }
-        else if (pstSocket->type() == 2)
-        {
         }
     }
     //epoll处理完成之后进行对应的io task的任务读取

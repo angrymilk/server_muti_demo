@@ -10,7 +10,7 @@ public:
     void loop();
     BaseServer(std::string ip, int port) : m_ip(ip), m_port(port)
     {
-        m_server_socket.reset(new TCPSocket(this));
+        m_server_socket.reset(new TCPSocket(this, 1));
         m_wake_fd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
         printf("[Common][BaseServer.h:%d][INFO]:New Fd=%d\n", __LINE__, m_wake_fd);
     }
@@ -24,6 +24,7 @@ public:
     void run_in_loop(Functor func);
     int run();
     void set_read_callback(TCPSocket::ReadFunctor read_func);
+    int add_client_socket(int client_port, std::string client_ip, int server_port, std::string server_ip);
     std::unordered_map<int, std::shared_ptr<TCPSocket>> m_sockets_map;
 
 private:

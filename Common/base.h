@@ -48,7 +48,9 @@ enum enmFdType
 
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 8888
-#define DB_NUM 1
+#define DBSERVER_NUM 1
+#define GAMESERVER_NUM 1
+#define GATESERVER_NUM 1
 #define BIT_COUNT ((1 << 20) | (1 << 21) | (1 << 22))
 typedef void (*ServerSendCallBack)(int uin, int cmd_id, google::protobuf::Message &msg);
 //typedef void (*Functor)();

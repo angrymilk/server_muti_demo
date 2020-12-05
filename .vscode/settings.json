@@ -46,6 +46,11 @@
         "unordered_set": "cpp",
         "cstddef": "cpp",
         "string_view": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "memory_resource": "cpp",
+        "optional": "cpp",
+        "set": "cpp"
     }
 }
