@@ -33,6 +33,5 @@ private:
     std::unordered_map<int, int> m_fd_map;
     std::unordered_map<int, int> m_con_map;
     std::vector<int> m_con;
-    int db_server_num;
 };
 #endif

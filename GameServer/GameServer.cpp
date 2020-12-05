@@ -65,41 +65,6 @@ void GameServer::get_one_code(TCPSocket &con)
     }
 }
 
-void GameServer::regist(TCPSocket &con, std::string &data, int datasize)
-{
-    RegisterMessageOn req;
-    req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, datasize);
-    m_sql_server->query(("select user_name,user_password from PlayerInfo where user_name='" + req.name() + "';").c_str());
-    std::map<std::string, std::map<std::string, std::string>> password = m_sql_server->parser();
-    std::cout << password[req.name()]["user_password"] << "    " << req.password() << "\n";
-    if (password[req.name()]["user_password"] == req.password())
-        printf("[GameServer][GameServer.cpp:%d][INFO]:密码匹配成功\n", __LINE__);
-    else
-        printf("[GameServer][GameServer.cpp:%d][ERROR]:密码匹配失败  ！！！！！！！！！！！！\n", __LINE__);
-    if (m_name_map.find(req.name()) == m_name_map.end())
-    {
-        m_name_map[req.name()] = rand() % 10009;
-        m_map_players[m_name_map[req.name()]].fd = con.get_fd();
-        m_map_players[m_name_map[req.name()]].player = make_shared<Player>(m_name_map[req.name()]);
-    }
-    m_sql_server->query(("UPDATE PlayerInfo SET user_id=" + std::to_string(m_name_map[req.name()]) + " WHERE user_name='" + req.name() + "';").c_str());
-    m_sql_server->query(("UPDATE PlayerInfo SET hp=" + std::to_string(100) + " WHERE user_name='" + req.name() + "';").c_str());
-    m_sql_server->query(("UPDATE PlayerInfo SET attack=" + std::to_string(100) + " WHERE user_name='" + req.name() + "';").c_str());
-
-    Response res;
-    res.set_uid(m_name_map[req.name()]);
-    res.set_ack(1);
-
-    char data_[COMMON_BUFFER_SIZE];
-    MsgHead head;
-    head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
-    int temp = head.m_message_len;
-    int codeLength = 0;
-    head.encode(data_, codeLength);
-    res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&GameServer::send, this, data_, temp));
-}
-
 void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
 {
     //基本逻辑处理->调用con的发送函数
@@ -267,16 +232,6 @@ void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
     con.send(std::bind(&GameServer::send, this, data_, temp));
-}
-
-void GameServer::serialize(TCPSocket &con, std::string &data, std::string &out, int type)
-{
-    //序列化处理
-}
-
-void GameServer::parse(char *input, int &size, int type)
-{
-    //反序列化处理
 }
 
 void GameServer::send(char *data, int size)

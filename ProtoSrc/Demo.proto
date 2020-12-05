@@ -112,3 +112,8 @@ message ClientMoveMessage
 }
 
 //6
+message ClientCheckMessage
+{
+  required int32 Uid = 1;
+  required string Password = 2;
+}

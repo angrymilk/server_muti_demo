@@ -7,7 +7,6 @@ GateServer::GateServer()
     m_server->set_read_callback(std::bind(&GateServer::on_message, this, std::placeholders::_1));
     m_con.resize(1);
     m_con[0] = m_server->add_client_socket(8888, "127.0.0.1", 10022, "127.0.0.1");
-    m_thread_task.Start();
 }
 
 int GateServer::run()
@@ -19,8 +18,7 @@ int GateServer::run()
 
 int GateServer::on_message(TCPSocket &con)
 {
-    //将函数扔入计算线程中
-    m_thread_task.submit(std::bind(&GateServer::get_one_code, this, con));
+    get_one_code(con);
     return 0;
 }
 
@@ -46,6 +44,13 @@ void GateServer::get_one_code(TCPSocket &con)
     }
 }
 
+bool GateServer::check_user(int uid)
+{
+    if (m_client_check.find(uid) == m_client_check.end() || m_user_check[uid] == false)
+        return false;
+    return true;
+}
+
 void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
 {
     int uid = 0;
@@ -54,12 +59,31 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         ClientDataQueryMessage req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
         uid = req.uid();
+        if (!check_user(uid))
+        {
+            printf("[GateServer][GateServer.cpp:%d][ERROR]:Check Uers Error \n", __LINE__);
+            return;
+        }
     }
     else if (((datasize & BIT_COUNT) >> 20) == 4)
     {
         ClientDataChangeMessage req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
         uid = req.uid();
+        if (!check_user(uid))
+        {
+            printf("[GateServer][GateServer.cpp:%d][ERROR]:Check Uers Error \n", __LINE__);
+            return;
+        }
+    }
+    else if (((datasize & BIT_COUNT) >> 20) == 2)
+    {
+        RegisterMessageGateBack req;
+        req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
+        if (m_user_pass.find(req.uid()) == m_user_pass.end())
+            m_user_pass[req.uid()] = req.password();
+        else
+            m_user_check[req.uid()] = true;
     }
     else
     {

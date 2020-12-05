@@ -20,19 +20,20 @@ public:
     GateServer();
     ~GateServer()
     {
-        m_thread_task.stop();
     }
     int run();
     int on_message(TCPSocket &con);
     void get_one_code(TCPSocket &con);
     void send(char *data, int size);
     void transmit(TCPSocket &con, std::string &data, int datasize);
-    ThreadTask m_thread_task;
+    bool check_user(int uid);
 
 private:
     std::shared_ptr<BaseServer> m_server;
     std::vector<int> m_con;
     std::unordered_map<int, int> m_player_con;
     std::unordered_map<int, int> m_con_client;
+    std::unordered_map<int, bool> m_client_check;
+    std::unordered_map<int, string> m_user_pass;
 };
 #endif
