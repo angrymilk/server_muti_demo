@@ -5,7 +5,8 @@ GateServer::GateServer()
 {
     m_server.reset(new BaseServer("127.0.0.1", 8888));
     m_server->set_read_callback(std::bind(&GateServer::on_message, this, std::placeholders::_1));
-    m_server->add_client_socket(8888, "127.0.0.1", 10022, "127.0.0.1");
+    m_con.resize(1);
+    m_con[0] = m_server->add_client_socket(8888, "127.0.0.1", 10022, "127.0.0.1");
     m_thread_task.Start();
 }
 

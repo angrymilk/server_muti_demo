@@ -1,5 +1,5 @@
 TARGET_DIR = $(CURDIR)/../Bin
-TARGET = $(TARGET_DIR)/game_server
+TARGET = $(TARGET_DIR)/gate_server
 
 ###############################################################################
 # variables

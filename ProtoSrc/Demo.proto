@@ -73,15 +73,13 @@ message RegisterMessageOn
 message RegisterMessageBack
 {
   required string IpAddr;
-  required int Port;
-  required Uid;
+  required int32 Port;
+  required int32 Uid;
 }
 
 //2
 message RegisterMessageGateBack
 {
-  required string IpAddr;
-  required int32 Port;
   required int32 Uid;
   required string Password;
 }

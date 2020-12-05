@@ -125,6 +125,7 @@ int BaseServer::add_client_socket(int client_port, std::string client_ip, int se
         return fail;
     }
     m_sockets_map[conn_socket->get_fd()] = conn_socket;
+    return conn_socket->get_fd();
 }
 
 int BaseServer::epoll_recv()

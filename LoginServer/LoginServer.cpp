@@ -1,15 +1,13 @@
 #include "LoginServer.h"
 #include <stdio.h>
 #include <stdlib.h>
-LoginServer::LoginServer(std::string ip, int port)
+LoginServer::LoginServer()
 {
     m_sql_server.reset(new SQLServer);
-    m_send_info.ip = ip;
-    m_send_info.port = port;
-
-    m_server.reset(new BaseServer(ip, port));
+    m_server.reset(new BaseServer("127.0.0.1", 10023));
     m_server->set_read_callback(std::bind(&LoginServer::on_message, this, std::placeholders::_1));
-    //m_map_players[0].player = make_shared<Player>(0);
+    m_con.resize(1);
+    m_con[0] = m_server->add_client_socket(10023, "127.0.0.1", 8888, "127.0.0.1");
 }
 
 int LoginServer::run()
@@ -36,7 +34,7 @@ void LoginServer::get_one_code(TCPSocket &con)
         ret = con.m_buffer->get_one_code(const_cast<char *>(m_sRvMsgBuf.c_str()), data_size);
         if (ret > 0)
         {
-            if (((data_size & BIT_COUNT) >> 20) == 0)
+            if ((data_size & BIT_COUNT) == 0)
             {
                 printf("[LoginServer][LoginServer.cpp:%d][INFO]: In Data Register Function\n", __LINE__);
                 register(con, m_sRvMsgBuf, data_size);
@@ -53,69 +51,49 @@ void LoginServer::get_one_code(TCPSocket &con)
 
 void LoginServer::register(TCPSocket &con, std::string &data, int datasize)
 {
-    Reqest req;
+    RegisterMessageOn req;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, datasize);
-    m_sql_server->query(("select user_name,user_password from PlayerInfo where user_name='" + req.name() + "';").c_str());
+    m_sql_server->query(("select uid,user_name,user_password from PlayerInfo where user_name='" + req.username() + "';").c_str());
     std::map<std::string, std::map<std::string, std::string>> password = m_sql_server->parser();
-    std::cout << password[req.name()]["user_password"] << "    " << req.password() << "\n";
-    if (password[req.name()]["user_password"] == req.password())
+    std::cout << password[req.username()]["user_password"] << "    " << req.password() << "\n";
+    if (password[req.username()]["user_password"] == req.password())
         printf("[LoginServer][LoginServer.cpp:%d][INFO]:密码匹配成功\n", __LINE__);
     else
         printf("[LoginServer][LoginServer.cpp:%d][ERROR]:密码匹配失败  ！！！！！！！！！！！！\n", __LINE__);
-    if (m_name_map.find(req.name()) == m_name_map.end())
-    {
-        m_name_map[req.name()] = rand() % 10009;
-        m_sql_server->query(("UPDATE PlayerInfo SET user_id=" + std::to_string(m_name_map[req.name()]) + " WHERE user_name='" + req.name() + "';").c_str());
-        m_map_players[m_name_map[req.name()]].fd = con.get_fd();
-        m_map_players[m_name_map[req.name()]].player = make_shared<Player>(m_name_map[req.name()]);
-    }
+    m_con_map[password[req.username()]["uid"]] = 0;
 
     RegisterMessageBack res;
-    res.set_ipaddr(password[req.name()]["ip_address"]);
-    res.set_port(password[req.name()]["port"]);
-    res.set_uid(m_name_map[req.name()]);
+    res.set_ipaddr(password[req.username()]["ip_address"]);
+    res.set_port(password[req.username()]["port"]);
+    res.set_uid(password[req.username()]["uid"]);
 
     char data_[COMMON_BUFFER_SIZE];
     MsgHead head;
-    head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
-    int temp = head.m_message_len;
+    head.m_message_len = (MESSAGE_HEAD_SIZE + res.ByteSize()) | (1 << 20);
+    int temp = MESSAGE_HEAD_SIZE + res.ByteSize();
     int codeLength = 0;
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&LoginServer::send, this, data_, temp, res.uid(), {password[req.name()]["port"], password[req.name()]["ip_address"]}));
-}));
+    con.send(std::bind(&LoginServer::send, this, data_, temp, res.uid()));
+
+    RegisterMessageGateBack res_gate;
+    res_gate.set_password(password[req.username()]["ip_address"]);
+    res_gate.set_uid(password[req.username()]["uid"]);
+    MsgHead head_;
+    head.m_message_len = (MESSAGE_HEAD_SIZE + res_gate.ByteSize()) | (1 << 21);
+    int temp = MESSAGE_HEAD_SIZE + res_gate.ByteSize();
+    int codeLength = 0;
+    head.encode(data_, codeLength);
+    res_gate.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res_gate.ByteSize());
+    con.send_client(std::bind(&LoginServer::send, this, data_, temp, res_gate.uid()));
+};
+
+void LoginServer::send_gate(char *data, int size, int uid)
+{
+    m_server->m_sockets_map[m_fd_map[uid]]->send_data(data, size);
 }
 
-void LoginServer::serialize(TCPSocket &con, std::string &data, std::string &out, int type)
+void LoginServer::send_client(char *data, int size, int uid)
 {
-    //序列化处理
-}
-
-void LoginServer::parse(char *input, int &size, int type)
-{
-    //反序列化处理
-}
-
-void LoginServer::send(char *data, int size, int db_id, IpPort ip_port)
-{
-    db_id %= DB_NUM;
-    std::shared_ptr<TCPSocket> db_socket = make_shared<TCPSocket>();
-    db_socket->open_as_client(const_cast<char *>(ip_port.ip.c_str()), ip_port.port, m_clientinfo.bufferlen);
-
-    int ret = 0;
-    for (unordered_map<int, PlayerInfo>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
-    {
-        int fd = m_map_players[iter->first].fd;
-        if (fd == -1)
-            continue;
-        ret = m_server->m_sockets_map[fd]->send_data(data, size);
-        if (ret < success)
-        {
-            printf("[LoginServer][LoginServer.cpp:%d][ERROR]:Send error ret=%d,errno:%d ,strerror:%s,fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
-        }
-        if (ret > success)
-        {
-            printf("[LoginServer][LoginServer.cpp:%d][INFO]:Send try multi ret=%d, errno:%d ,strerror:%s, fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
-        }
-    }
+    m_server->m_sockets_map[m_con[m_con_map[uid]]]->send_data(data, size);
 }

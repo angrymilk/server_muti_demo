@@ -17,31 +17,22 @@ struct PlayerInfo
 class LoginServer
 {
 public:
-    GameServer(std::string ip, int port);
-    ~GameServer()
+    LoginServer();
+    ~LoginServer()
     {
     }
     int run();
     int on_message(TCPSocket &con);
     void get_one_code(TCPSocket &con);
-    void solve(TCPSocket &con, std::string &data, int datasize);
-    void serialize(TCPSocket &con, std::string &data, std::string &out, int type);
-    void parse(char *input, int &size, int type);
-    void send(char *data, int size);
+    void send_gate(char *data, int size, int uid);
+    void send_client(char *data, int size, int uid);
     void register(TCPSocket &con, std::string &data, int datasize);
 
 private:
-    struct IpPort
-    {
-        int port;
-        string ip;
-    };
-    IpPort m_send_info;
     std::shared_ptr<BaseServer> m_server;
-    std::unordered_map<int, PlayerInfo> m_map_players;
-    std::unordered_map<string, int> m_uid_map;
-    std::vector<IpPort> db_server_info;
-    std::vector<std::shared_ptr<TCPSocket>> m_clients;
+    std::unordered_map<int, int> m_fd_map;
+    std::unordered_map<int, int> m_con_map;
+    std::vector<int> m_con;
     int db_server_num;
 };
 #endif
