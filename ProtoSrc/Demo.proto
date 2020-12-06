@@ -12,13 +12,6 @@ message Response{
   required int32 Ack = 2; 
 }
 
-message Modelinfo
-{
-  required int32 Modeltype = 1;
-  repeated int32 Attributetype = 2;
-  repeated int32 Attributetypevalue = 3;
-}
-
 //客户端物品操作请求
 message Addreq
 {
@@ -67,6 +60,13 @@ message ClientDataQueryMessage
 {
   required int32 Uid = 1;                 //玩家id
   required int32 Init = 2;                
+}
+
+message Modelinfo
+{
+  required int32 Modeltype = 1;
+  repeated int32 Attributetype = 2;
+  repeated int32 Attributetypevalue = 3;
 }
 
 //4

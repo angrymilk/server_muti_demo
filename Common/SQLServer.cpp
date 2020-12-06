@@ -30,21 +30,22 @@ int32_t SQLServer::query(const char *queryer)
     return 0;
 }
 
-std::map<std::string, std::map<std::string, std::string>> SQLServer::parser()
+std::map<int, std::map<std::string, std::string>> SQLServer::parser()
 {
-    std::map<std::string, std::map<std::string, std::string>> mp;
+    std::map<int, std::map<std::string, std::string>> mp;
     MYSQL_RES *res = mysql_store_result(con);
     int32_t num_fields = mysql_num_fields(res);
     MYSQL_FIELD *field = mysql_fetch_fields(res);
-    std::string index;
+    int index;
+    int num = 0;
     while (MYSQL_ROW row = mysql_fetch_row(res))
     {
         for (int32_t i = 0; i < num_fields; ++i)
         {
             if (i == 0)
             {
-                mp.insert(std::make_pair(row[i], std::map<std::string, std::string>()));
-                index = row[i];
+                mp.insert(0, std::map<std::string, std::string>());
+                index = num;
             }
             else
             {
@@ -52,6 +53,7 @@ std::map<std::string, std::map<std::string, std::string>> SQLServer::parser()
             }
             printf("[%s]=>[%s]\n", field[i].name, row[i]);
         }
+        num++;
     }
     mysql_free_result(res);
     return mp;

@@ -54,16 +54,54 @@ void DBServer::get_one_code(TCPSocket &con)
     }
 }
 
+//物品的增和删
 void DBServer::solve_add(TCPSocket &con, std::string &data, int datasize)
 {
-
-    //基本逻辑处理->调用con的发送函数
     int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
     ClientDataChangeMessage req;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
     m_player_con[req.uid()] = con.get_fd();
+    if (req.value() > 0)
+    {
+        if (req.inuse())
+            m_sql_server->query(("INSERT INTO UseInfo (player_id,item_id,item_num) VALUES ('" + std::string(req.uid()) + "','" + std::string(req.id()) + "','" + std::string(1) + "')").c_str());
+        else
+        {
+            m_sql_server->query(("select * from PackageInfo where user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
+            std::map<int, std::map<int, std::string>> iteminfo = m_sql_server->parser();
+            if (iteminfo.size())
+            {
+                int num = std::stoi(iteminfo[0]["item_num"]);
+                num += req.value();
+                m_sql_server->query(("UPDATE PackageInfo SET item_num='" + std::string(num) + "' WHERE user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
+            }
+            else
+                m_sql_server->query(("INSERT INTO PackageInfo (player_id,item_id,item_num) VALUES ('" + std::string(req.uid()) + "','" + std::string(req.id()) + "','" + std::string(1) + "')").c_str());
+        }
+    }
+    else
+    {
+        if (req.dropfrom())
+        {
+            m_sql_server->query(("DELETE FROM UseInfo WHRER item_id='" + std::string(req.id()) + "' AND user_id='" + std::string(req.uid()) + "')").c_str());
+        }
+        else
+        {
+            m_sql_server->query(("select * from PackageInfo where user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
+            std::map<int, std::map<int, std::string>> iteminfo = m_sql_server->parser();
+            int num = std::stoi(iteminfo[0]["item_num"]);
+            num += req.value();
+            if (num)
+            {
+                m_sql_server->query(("UPDATE PackageInfo SET item_num='" + std::string(num) + "' WHERE user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
+            }
+            else
+                m_sql_server->query(("DELETE FROM PackageInfo WHERE player_id='" + std::string(req.uid()) + "' AND item_id='" + std::string(req.id()) + "')").c_str());
+        }
+    }
 }
 
+//物品的信息查询
 void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
 {
     ClientDataQueryMessage req;
@@ -73,7 +111,7 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
 
     //玩家个人信息的数据加载
     m_sql_server->query(("select * from PlayerInfo where user_id='" + std::string(req.uid()) + "';").c_str());
-    std::map<std::string, std::map<int, std::string>> userinfo = m_sql_server->parser();
+    std::map<int, std::map<int, std::string>> userinfo = m_sql_server->parser();
     res.set_hp(stoi(userinfo[0]["hp"]));
     res.set_attack(stoi(userinfo[0]["attack"]));
     res.set_uid(stoi(req.uid()));
@@ -125,8 +163,8 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
 
     char data_[COMMON_BUFFER_SIZE];
     MsgHead head;
-    head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
     int temp = head.m_message_len;
+    head.m_message_len = ((res.ByteSize() + MESSAGE_HEAD_SIZE) ^ (1 << 23));
     int codeLength = 0;
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());

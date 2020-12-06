@@ -18,7 +18,7 @@ public:
     ~SQLServer();
     int32_t query(const char *queryer);
 
-    std::map<std::string, std::map<std::string, std::string>> parser();
+    std::map<int, std::map<std::string, std::string>> parser();
 };
 
 #endif
