@@ -17,7 +17,7 @@ struct PlayerInfo
 class GameServer
 {
 public:
-    GameServer(std::string ip, int port);
+    GameServer();
     ~GameServer()
     {
         m_thread_task.stop();
@@ -34,8 +34,9 @@ public:
 private:
     std::shared_ptr<BaseServer> m_server;
     std::unordered_map<int, PlayerInfo> m_map_players;
-    std::shared_ptr<RedisServer> m_redis_server;
     std::shared_ptr<SQLServer> m_sql_server;
-    std::unordered_map<string, int> m_name_map;
+    std::unordered_map<int, int> m_player_db;
+    std::vector<int> m_db;
+    int db_num;
 };
 #endif

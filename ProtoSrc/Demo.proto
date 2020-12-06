@@ -40,28 +40,6 @@ message Packagereq
   required int32 Init = 2;                //0:代表不需要进行任何数据库的数据读取  1:代表需要从redis中读取数据   2:表示需要从数据库中读取数据
 }
 
-message Attributeitempro
-{
-  required int32 Id = 1;
-  optional int32 Amount = 2;
-  optional int32 Eltemtype = 3;
-  repeated int32 attribute = 4;
-}
-
-message Packagepro
-{
-  repeated Attributeitempro Itempro = 1;
-}
-
-message Redisplayerinfo
-{
-  required int32 Hp = 1;
-  required int32 Attack = 2;
-  required int32 Id = 3;
-  repeated Attributeitempro Inuse = 4;
-  optional Packagepro Package = 5;
-}
-
 //0
 message RegisterMessageOn
 {
@@ -108,7 +86,15 @@ message ClientDataChangeMessage
 //5
 message ClientMoveMessage
 {
-  
+  int32 Uid = 1;
+  int32 Posx = 2;
+  int32 Posy = 3;
+  int32 Posz = 4;
+  int32 Tarx = 5;
+  int32 Tary = 6;
+  int32 Tarz = 7;
+  int32 Speed = 8;
+  int64 Time = 9;
 }
 
 //6
@@ -116,4 +102,33 @@ message ClientCheckMessage
 {
   required int32 Uid = 1;
   required string Password = 2;
+}
+
+message Attributeitempro
+{
+  required int32 Id = 1;
+  optional int32 Amount = 2;
+  optional int32 Eltemtype = 3;
+  repeated int32 attribute = 4;
+}
+
+message Packagepro
+{
+  repeated Attributeitempro Itempro = 1;
+}
+
+//7
+message Sqlplayerinfo
+{
+  required int32 Hp = 1;
+  required int32 Attack = 2;
+  required int32 Uid = 3;
+  repeated Attributeitempro Inuse = 4;
+  optional Packagepro Package = 5;
+}
+
+//8
+message DBToGameMessage
+{
+  required int32 Ack;
 }

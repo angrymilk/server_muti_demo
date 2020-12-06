@@ -7,7 +7,7 @@ int main(int argc, char **argv)
         printf("IP PORT INFO must be input\n");
         return 0;
     }
-    std::shared_ptr<GameServer> ptr(new GameServer(string(argv[1]), atoi(argv[2])));
+    std::shared_ptr<GameServer> ptr(new GameServer());
     ptr->run();
     return 0;
 }

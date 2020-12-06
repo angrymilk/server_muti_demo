@@ -52,6 +52,7 @@ enum enmFdType
 #define GAMESERVER_NUM 1
 #define GATESERVER_NUM 1
 #define BIT_COUNT ((1 << 20) | (1 << 21) | (1 << 22))
+#define DB_NUM 1
 typedef void (*ServerSendCallBack)(int uin, int cmd_id, google::protobuf::Message &msg);
 //typedef void (*Functor)();
 typedef std::function<void()> Functor;
@@ -76,6 +77,18 @@ enum enmConnErrorCode
     enmConnErrorCode_invalid_param = -5,
     enmConnErrorCode_unknow = -6,
 
+};
+
+struct Pos
+{
+    int posx;
+    int posy;
+    int posz;
+    int tarx;
+    int tary;
+    int tarz;
+    int speed;
+    int time;
 };
 
 #endif //DEMO_BASE_H

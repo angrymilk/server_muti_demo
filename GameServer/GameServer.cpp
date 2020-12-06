@@ -1,18 +1,16 @@
 #include "GameServer.h"
 #include <stdio.h>
 #include <stdlib.h>
-GameServer::GameServer(std::string ip, int port)
+GameServer::GameServer()
 {
     m_redis_server.reset(new RedisServer);
     m_sql_server.reset(new SQLServer);
     m_redis_server->Init();
     m_redis_server->Connect();
 
-    m_server.reset(new BaseServer(ip, port));
+    m_server.reset(new BaseServer("127.0.0.1", 10022));
     m_server->set_read_callback(std::bind(&GameServer::on_message, this, std::placeholders::_1));
     m_thread_task.Start();
-    m_map_players[0].fd = -1; //场景代表
-    m_map_players[0].player = make_shared<Player>(0);
 }
 
 int GameServer::run()
@@ -40,20 +38,21 @@ void GameServer::get_one_code(TCPSocket &con)
         ret = con.m_buffer->get_one_code(const_cast<char *>(m_sRvMsgBuf.c_str()), data_size);
         if (ret > 0)
         {
-            if (((data_size & ((1 << 20) | (1 << 21))) >> 20) == 1)
+            if (((data_size & BIT_COUNT) >> 20) == 4)
             {
                 printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Change Function\n", __LINE__);
                 solve_add(con, m_sRvMsgBuf, data_size);
             }
-            else if (((data_size & ((1 << 20) | (1 << 21))) >> 20) == 2)
+            else if (((data_size & BIT_COUNT) >> 20) == 3)
             {
-                printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Query Function\n", __LINE__);
-                solve_query(con, m_sRvMsgBuf, data_size);
+                printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Function\n", __LINE__);
+                con.send_data
+                    solve_query(con, m_sRvMsgBuf, data_size);
             }
-            else if (((data_size & ((1 << 20) | (1 << 21))) >> 20) == 0)
+            else if (((data_size & BIT_COUNT) >> 20) == 5)
             {
-                printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Register Function\n", __LINE__);
-                regist(con, m_sRvMsgBuf, data_size);
+                printf("[GameServer][GameServer.cpp:%d][INFO]: In Move Function\n", __LINE__);
+                move_calculate(con, m_sRvMsgBuf, data_size);
             }
             continue;
         }
@@ -65,176 +64,117 @@ void GameServer::get_one_code(TCPSocket &con)
     }
 }
 
-void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
+void GameServer::move_calculate(TCPSocket &con, std::string &data, int datasize)
 {
-    //基本逻辑处理->调用con的发送函数
-    int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
-    Addreq req;
-    req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
-    if (req.value() > 0)
-    {
-        if (m_map_players.find(req.uid()) == m_map_players.end())
-        {
-            printf("[GameServer][GameServer.cpp:%d][ERROR]:No Such Player = [%d]\n", __LINE__, req.uid());
-            return;
-        }
-        ItemInfo info;
-        info.id = req.id();
-        info.mmotype.resize(3);
-        info.value.resize(3);
-        info.mattrtype.resize(3);
-
-        for (int i = 0; i < 3; i++)
-        {
-            info.mmotype[i] = (EltemModuleType)i;
-            info.mattrtype[i].resize(3);
-            info.value[i].resize(3);
-            for (int j = 0; j < 3; j++)
-            {
-                info.value[i][j] = 0;
-                info.mattrtype[i][j] = (EltemAttributeType)j;
-            }
-        }
-        for (int i = 0; i < req.mode_size(); i++)
-        {
-            Modelinfo tmp = req.mode(i);
-            for (int j = 0; j < tmp.attributetype_size(); j++)
-                info.value[tmp.modeltype()][tmp.attributetype(j)] = tmp.attributetypevalue(j);
-        }
-        info.mtype = (EltemType)req.eltemtype();
-        int ret = m_map_players[req.uid()].player->add(info, req.pos(), req.value(), req.dropfrom(), m_sql_server);
-        if (ret)
-            return;
-    }
-    else
-    {
-        m_map_players[req.uid()].player->consume(req.id(), (EltemType)req.eltemtype(), req.value(), req.dropfrom(), req.inuse(), m_sql_server);
-    }
-    //############################################  进行数据格式化方便进行redis的数据落地  ########################################################
-
-    Redisplayerinfo tmp;
-    tmp.set_hp(m_map_players[req.uid()].player->get_hp());
-    tmp.set_attack(m_map_players[req.uid()].player->get_attack());
-    tmp.set_id(req.uid());
-    //存储目前正在使用的道具的信息
-    if (m_map_players[req.uid()].player->m_in_use.begin() == m_map_players[req.uid()].player->m_in_use.end())
-    {
-        Attributeitempro *temp = tmp.add_inuse();
-        temp->set_id(-1);
-        temp->add_attribute(-1);
-    }
-    for (unordered_map<int, std::shared_ptr<AbstractItem>>::iterator iter = m_map_players[req.uid()].player->m_in_use.begin(); iter != m_map_players[req.uid()].player->m_in_use.end(); iter++)
-    {
-        printf("在使用中的道具\n");
-        Attributeitempro *temp = tmp.add_inuse();
-        std::shared_ptr<AbstractItem> ptr = m_map_players[req.uid()].player->m_in_use[iter->first];
-        temp->set_amount(ptr->get_amount());
-        temp->set_id(ptr->get_uid());
-        temp->set_eltemtype(ptr->get_eltem_type());
-        temp->add_attribute(ptr->get_attribute(EltemModuleType::eltem_Module_Base, EltemAttributeType::eltem_Attribute_Attack));
-        temp->add_attribute(ptr->get_attribute(EltemModuleType::eltem_Module_Base, EltemAttributeType::eltem_Attribute_HP));
-        temp->add_attribute(ptr->get_attribute(EltemModuleType::eltem_Module_Power, EltemAttributeType::eltem_Attribute_Attack));
-        temp->add_attribute(ptr->get_attribute(EltemModuleType::eltem_Module_Power, EltemAttributeType::eltem_Attribute_HP));
-        temp->add_attribute(ptr->get_attribute(EltemModuleType::eltem_Module_Insert, EltemAttributeType::eltem_Attribute_Attack));
-        temp->add_attribute(ptr->get_attribute(EltemModuleType::eltem_Module_Insert, EltemAttributeType::eltem_Attribute_HP));
-    }
-    //存储背包相关的信息
-    std::shared_ptr<Package> ptr = m_map_players[req.uid()].player->get_package();
-    std::unordered_map<int, std::pair<int, int>> _map = ptr->get_map();
-    if (_map.begin() != _map.end())
-    {
-        Packagepro *packagein = tmp.mutable_package();
-        for (std::unordered_map<int, std::pair<int, int>>::iterator iter = _map.begin(); iter != _map.end(); iter++)
-        {
-            printf("存储背包相关的信息\n");
-            Attributeitempro *temp = packagein->add_itempro();
-            int i = iter->second.first, j = iter->second.second;
-            temp->set_amount(ptr->get_vec(i, j)->get_amount());
-            temp->set_id(ptr->get_vec(i, j)->get_uid());
-            temp->set_eltemtype(ptr->get_vec(i, j)->get_eltem_type());
-            temp->add_attribute(ptr->get_vec(i, j)->get_attribute(EltemModuleType::eltem_Module_Base, EltemAttributeType::eltem_Attribute_Attack));
-            temp->add_attribute(ptr->get_vec(i, j)->get_attribute(EltemModuleType::eltem_Module_Base, EltemAttributeType::eltem_Attribute_HP));
-            temp->add_attribute(ptr->get_vec(i, j)->get_attribute(EltemModuleType::eltem_Module_Power, EltemAttributeType::eltem_Attribute_Attack));
-            temp->add_attribute(ptr->get_vec(i, j)->get_attribute(EltemModuleType::eltem_Module_Power, EltemAttributeType::eltem_Attribute_HP));
-            temp->add_attribute(ptr->get_vec(i, j)->get_attribute(EltemModuleType::eltem_Module_Insert, EltemAttributeType::eltem_Attribute_Attack));
-            temp->add_attribute(ptr->get_vec(i, j)->get_attribute(EltemModuleType::eltem_Module_Insert, EltemAttributeType::eltem_Attribute_HP));
-        }
-    }
-
-    char key[5];
-    char out[1001];
-    snprintf(key, 5, "%d", tmp.id());
-    tmp.SerializePartialToArray(out, tmp.ByteSize());
-    m_redis_server->Set(key, tmp.ByteSize(), out);
-    //############################################################  结束数据格式化  ##################################################################
-    Response res;
-    res.set_uid(req.uid());
-    res.set_ack(1);
-
+    Player temp;
+    parse(const_cast<char *>(data.c_str()), temp, datasize);
+    handle_move(temp);
     char data_[COMMON_BUFFER_SIZE];
+    serialize(data_, temp);
+    vector<int> deletePlayer;
+    for (unordered_map<int, PlayerInfo>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
+    {
+        int fd = m_map_players[iter->first].fd;
+        if (m_server->m_sockets_map.find(fd) == m_server->m_sockets_map.end())
+        {
+            printf("[GameServer][GameServer.cpp:%d][WARNING]:fd:[%d] is not in the map now,maybe is deleted\n", __LINE__, fd);
+            deletePlayer.emplace_back(iter->first);
+            continue;
+        }
+    }
+    for (vector<int>::iterator iter = deletePlayer.begin(); iter != deletePlayer.end(); iter++)
+        m_map_players.erase(*iter);
+    con.send(std::bind(&GameServer::send, this, data_, datasize));
+}
+
+void GameServer::serialize(char *data, Player &temp)
+{
+    //序列化处理
+    ClientMoveMessage res;
+    res.set_name(temp.uid);
+    res.set_posx(temp.m_pos.posx);
+    res.set_posy(temp.m_pos.posy);
+    res.set_posz(temp.m_pos.posz);
+    res.set_tarx(temp.m_pos.tarx);
+    res.set_tary(temp.m_pos.tary);
+    res.set_tarz(temp.m_pos.tarz);
+    res.set_speed(temp.m_pos.speed);
+    res.set_time(temp.m_pos.time);
     MsgHead head;
     head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
-    int temp = head.m_message_len;
     int codeLength = 0;
-    head.encode(data_, codeLength);
-    res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&GameServer::send, this, data_, temp));
+    head.encode(data, codeLength);
+    res.SerializePartialToArray(data + codeLength, res.ByteSize());
+}
+
+void GameServer::parse(char *input, Player &player, int &size)
+{
+    //反序列化处理
+    ClientMoveMessage req;
+    req.ParseFromArray(input + MESSAGE_HEAD_SIZE, ((size - MESSAGE_HEAD_SIZE) & ((1 << 20) - 1)));
+    player.uid = req.uid();
+    player.m_pos.posx = req.posx();
+    player.m_pos.posy = req.posy();
+    player.m_pos.posz = req.posz();
+    player.m_pos.tarx = req.tarx();
+    player.m_pos.tary = req.tary();
+    player.m_pos.tarz = req.tarz();
+    player.m_pos.speed = req.speed();
+    player.m_pos.time = req.time();
+}
+
+void GameServer::handle_move(Player &player)
+{
+    int uid = player.get_id();
+    Player player_ = m_player_vec[uid];
+    int delta_time = player.time - player_.time;
+    float move_rate = delta_time * player_.speed / sqrt((player.tarx - player_.tarx) * (player.tarx - player_.tarx) + (player.tarz - player_.tarz) * (player.tarz - player_.tarz));
+    int x = player.tarx + move_rate * player.posx;
+    int z = player.tarz + move_rate * player.posz;
+    //int y = player.tary + move_rate * player.posy;
+    if (10 < (x - player_.tarx) * (x - player_.tarx) + (z - player_.tarz) * (z - player_.tarz))
+    {
+        //如果差距太大做拉回的操作
+        player.m_is_cheat = true;
+        player.m_pos.posx = player_.posx;
+        player.m_pos.posy = player.posy;
+        player.m_pos.posz = player.posz;
+        player.m_pos.tarx = player.tarx;
+        player.m_pos.tary = player.tary;
+        player.m_pos.tarz = player.tarz;
+        player.m_pos.speed = player.speed;
+    }
+    else
+        m_player_vec[uid] = player;
+}
+
+void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
+{
+    int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
+    ClientDataChangeMessage req;
+    //Packageres res;
+    req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
+    if (m_player_db.find(req.uid()) == m_player_db.end())
+    {
+        m_player_db[req.uid()] = m_db[db_num % DB_NUM];
+    }
+    con.send(std::bind(&GameServer::send_db, this, data_, temp, uid));
 }
 
 void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
 {
     int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
-    Packagereq req;
+    ClientDataQueryMessage req;
     //Packageres res;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
-
-    //查询redis端的数据
-    if (req.init() == 1)
+    if (m_player_db.find(req.uid()) == m_player_db.end())
     {
-        int id = req.uid();
-        int len = 0;
-        char idque[20];
-        snprintf(idque, 5, "%d", id);
-        char result[507];
-        m_redis_server->Get(idque, result, &len);
-        Redisplayerinfo tmp;
-        tmp.ParseFromArray(result, len);
-        printf("#################   从redis中读取客户端玩家的数据信息   ##################################\n");
-        printf("#####################################################################################\n");
-        printf("#####################################################################################\n");
-        printf("################# Player_Id=%d      Player_Hp=%d    Player_Attakc=%d  ###############\n", tmp.id(), tmp.hp(), tmp.attack());
-        for (int i = 0; i < tmp.inuse_size(); i++)
-        {
-            Attributeitempro temp = tmp.inuse(i);
-            if (temp.id() == -1)
-                break;
-            printf("################# 正在处于使用中的道具   id=%d      道具数量=%d\n", temp.id(), temp.amount());
-        }
-        Packagepro packageinfo = tmp.package();
-        for (int i = 0; i < packageinfo.itempro_size(); i++)
-        {
-            Attributeitempro temp = packageinfo.itempro(i);
-            printf("################# 放在背包中的物品       id=%d      物品数量=%d   物品类型=%d (说明: 0:代表金钱  1:代表道具  2:代表消耗品)\n", temp.id(), temp.amount(), temp.eltemtype());
-        }
-        printf("#####################################################################################\n");
-        printf("#####################################################################################\n");
+        m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
-
-    Response res;
-    res.set_ack(1);
-    res.set_uid(req.uid());
-
-    char data_[COMMON_BUFFER_SIZE];
-    MsgHead head;
-    head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
-    int temp = head.m_message_len;
-    int codeLength = 0;
-    head.encode(data_, codeLength);
-    res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&GameServer::send, this, data_, temp));
+    con.send(std::bind(&GameServer::send_db, this, data_, temp, uid));
 }
 
-void GameServer::send(char *data, int size)
+void GameServer::send(char *data, int size, int uid)
 {
     int ret = 0;
     for (unordered_map<int, PlayerInfo>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
@@ -251,5 +191,33 @@ void GameServer::send(char *data, int size)
         {
             printf("[GameServer][GameServer.cpp:%d][INFO]:Send try multi ret=%d, errno:%d ,strerror:%s, fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
         }
+    }
+}
+
+void GameServer::send_db(char *data, int size, int uid)
+{
+    if (con.get_type == 1)
+    {
+        m_server->m_sockets_map[db[uid]]->send_data(data, size);
+    }
+    else
+    {
+        if ((data & (1 << 30)))
+        {
+            for (unordered_map<int, int>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
+            {
+                m_server->m_sockets_map[db[uid]]->send_data(data, size);
+                if (ret < success)
+                {
+                    printf("[GateServer][GateServer.cpp:%d][ERROR]:Send error ret=%d,errno:%d ,strerror:%s,fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
+                }
+                if (ret > success)
+                {
+                    printf("[GateServer][GateServer.cpp:%d][INFO]:Send try multi ret=%d, errno:%d ,strerror:%s, fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
+                }
+            }
+        }
+        else
+            m_server->m_sockets_map[db[uid]]->send_data(data, size);
     }
 }

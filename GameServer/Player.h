@@ -44,5 +44,7 @@ private:
     std::shared_ptr<Package> m_package; //非使用中的道具(背包中的道具)
     int m_attack;
     int m_hp;
+    int m_hs;
+    Pos m_pos;
 };
 #endif
