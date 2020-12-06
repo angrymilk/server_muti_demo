@@ -28,6 +28,7 @@ public:
     void solve(TCPSocket &con, std::string &data, int datasize);
     void send(char *data, int size);
     void send_db(char *data, int size, int uid);
+    void move_calculate(TCPSocket &con, std::string &data, int datasize);
 
     //转发gateserver发来的db增删请求
     void solve_add(TCPSocket &con, std::string &data, int datasize);
@@ -39,6 +40,8 @@ public:
     void solve_query(TCPSocket &con, std::string &data, int datasize);
     void parse(char *input, Player &player, int &size);
     void handle_move(Player &player);
+    void make_fd(int uid, int fd);
+    void serialize(char *data, Player &temp);
     ThreadTask m_thread_task;
 
 private:

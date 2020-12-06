@@ -32,5 +32,6 @@ private:
     std::shared_ptr<BaseServer> m_server;
     std::vector<int> m_con;
     std::unordered_map<int, int> m_player_con;
+    std::shared_ptr<SQLServer> m_sql_server;
 };
 #endif

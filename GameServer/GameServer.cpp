@@ -64,10 +64,17 @@ void GameServer::get_one_code(TCPSocket &con)
     }
 }
 
+void GameServer::make_fd(int uid, int fd)
+{
+    if (m_map_players.find(uid) == m_map_players.end())
+        m_map_players[uid] = {fd, make_shared<Player>(uid)};
+}
+
 void GameServer::move_calculate(TCPSocket &con, std::string &data, int datasize)
 {
-    Player temp;
+    Player temp(-1);
     parse(const_cast<char *>(data.c_str()), temp, datasize);
+    make_fd(temp.uin(), con.get_fd());
     handle_move(temp);
     char data_[COMMON_BUFFER_SIZE];
     serialize(data_, temp);
@@ -91,7 +98,7 @@ void GameServer::serialize(char *data, Player &temp)
 {
     //序列化处理
     ClientMoveMessage res;
-    res.set_name(temp.uid);
+    res.set_uid(temp.uin());
     res.set_posx(temp.m_pos.posx);
     res.set_posy(temp.m_pos.posy);
     res.set_posz(temp.m_pos.posz);
@@ -112,7 +119,7 @@ void GameServer::parse(char *input, Player &player, int &size)
     //反序列化处理
     ClientMoveMessage req;
     req.ParseFromArray(input + MESSAGE_HEAD_SIZE, ((size - MESSAGE_HEAD_SIZE) & ((1 << 20) - 1)));
-    player.uid = req.uid();
+    player.set_uin(req.uid());
     player.m_pos.posx = req.posx();
     player.m_pos.posy = req.posy();
     player.m_pos.posz = req.posz();
@@ -125,27 +132,26 @@ void GameServer::parse(char *input, Player &player, int &size)
 
 void GameServer::handle_move(Player &player)
 {
-    int uid = player.get_id();
-    Player player_ = m_player_vec[uid];
-    int delta_time = player.time - player_.time;
-    float move_rate = delta_time * player_.speed / sqrt((player.posx - player_.posx) * (player.posx - player_.posx) + (player.posz - player_.posz) * (player.posz - player_.posz));
-    int x = player.posx + move_rate * player.tarx;
-    int z = player.posz + move_rate * player.tarz;
+    int uid = player.uin();
+    std::shared_ptr<Player> player_ = m_map_players[uid].player;
+    int delta_time = player.m_pos.time - player_->m_pos.time;
+    float move_rate = delta_time * player_->m_pos.speed / sqrt((player.m_pos.posx - player_->m_pos.posx) * (player.m_pos.posx - player_->m_pos.posx) + (player.m_pos.posz - player_->m_pos.posz) * (player.m_pos.posz - player_->m_pos.posz));
+    int x = player.m_pos.posx + move_rate * player.m_pos.tarx;
+    int z = player.m_pos.posz + move_rate * player.m_pos.tarz;
     //int y = player.tary + move_rate * player.posy;
-    if (10 < (x - player_.posx) * (x - player_.posx) + (z - player_.posz) * (z - player_.posz))
+    if (10 < (x - player_->m_pos.posx) * (x - player_->m_pos.posx) + (z - player_->m_pos.posz) * (z - player_->m_pos.posz))
     {
         //如果差距太大做拉回的操作
-        player.m_is_cheat = true;
-        player.m_pos.posx = player_.posx;
-        player.m_pos.posy = player_.posy;
-        player.m_pos.posz = player_.posz;
-        player.m_pos.tarx = player_.tarx;
-        player.m_pos.tary = player_.tary;
-        player.m_pos.tarz = player_.tarz;
-        player.m_pos.speed = player_.speed;
+        player.m_pos.posx = player_->m_pos.posx;
+        player.m_pos.posy = player_->m_pos.posy;
+        player.m_pos.posz = player_->m_pos.posz;
+        player.m_pos.tarx = player_->m_pos.tarx;
+        player.m_pos.tary = player_->m_pos.tary;
+        player.m_pos.tarz = player_->m_pos.tarz;
+        player.m_pos.speed = player_->m_pos.speed;
     }
     else
-        m_player_vec[uid] = player;
+        m_map_players[uid].player = std::make_shared<Player>(player);
 }
 
 void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
@@ -157,7 +163,8 @@ void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
     {
         m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
-    con.send_db(std::bind(&GameServer::send_db, this, data, temp, m_player_db[req.uid()]));
+    make_fd(req.uid(), con.get_fd());
+    con.send(std::bind(&GameServer::send_db, this, data, datasize, m_player_db[req.uid()]));
 }
 
 void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
@@ -169,7 +176,8 @@ void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
     {
         m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
-    con.send_db(std::bind(&GameServer::send_db, this, data, temp, m_player_db[req.uid()]));
+    make_fd(req.uid(), con.get_fd());
+    con.send(std::bind(&GameServer::send_db, this, data, datasize, m_player_db[req.uid()]));
 }
 
 void GameServer::transmit_db(TCPSocket &con, std::string &data, int datasize)
@@ -177,7 +185,7 @@ void GameServer::transmit_db(TCPSocket &con, std::string &data, int datasize)
     int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
     Sqlplayerinfo req;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
-    con.send_db(std::bind(&GameServer::send_db, this, data, temp, m_map_players[req.uid()].fd));
+    con.send(std::bind(&GameServer::send_db, this, data, datasize, m_map_players[req.uid()].fd));
 }
 
 void GameServer::send(char *data, int size)

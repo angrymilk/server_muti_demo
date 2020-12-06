@@ -114,7 +114,7 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
     std::map<int, std::map<int, std::string>> userinfo = m_sql_server->parser();
     res.set_hp(stoi(userinfo[0]["hp"]));
     res.set_attack(stoi(userinfo[0]["attack"]));
-    res.set_uid(stoi(req.uid()));
+    res.set_uid(std::stoi(req.uid()));
 
     //道具背包的数据加载
     m_sql_server->query(("select * from UseInfo where user_id='" + std::string(req.uid()) + "';").c_str());

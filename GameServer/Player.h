@@ -38,6 +38,7 @@ public:
 
     std::shared_ptr<Package> get_package();
     std::unordered_map<int, std::shared_ptr<AbstractItem>> m_in_use; //在使用中的道具(非背包部分的道具)
+    Pos m_pos;
 
 private:
     int m_uin;
@@ -45,6 +46,5 @@ private:
     int m_attack;
     int m_hp;
     int m_hs;
-    Pos m_pos;
 };
 #endif

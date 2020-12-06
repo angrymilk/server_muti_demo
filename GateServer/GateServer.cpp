@@ -94,10 +94,10 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
     if (m_player_con.find(uid) == m_player_con.end() && con.get_type == 1)
     {
         m_con_client[uid] = con.get_fd();
-        m_player_con[uid] = m_con[uid % GateServer_NUM];
+        m_player_con[uid] = m_con[uid % GATESERVER_NUM];
     }
 
-    con.send(std::bind(&GateServer::send, this, con, data.c_str(), datasHize, uid));
+    con.send(std::bind(&GateServer::send, this, con, data.c_str(), datasize, uid));
 }
 
 void GateServer::send(TCPSocket &con, char *data, int size, int uid)
@@ -108,19 +108,11 @@ void GateServer::send(TCPSocket &con, char *data, int size, int uid)
     }
     else
     {
-        if ((data & (1 << 30)))
+        if ((size & (1 << 30)))
         {
             for (unordered_map<int, int>::iterator iter = m_player_con.begin(); iter != m_player_con.end(); iter++)
             {
                 m_server->m_sockets_map[m_con_client[uid]]->send_data(data, size);
-                if (ret < success)
-                {
-                    printf("[GateServer][GateServer.cpp:%d][ERROR]:Send error ret=%d,errno:%d ,strerror:%s,fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
-                }
-                if (ret > success)
-                {
-                    printf("[GateServer][GateServer.cpp:%d][INFO]:Send try multi ret=%d, errno:%d ,strerror:%s, fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
-                }
             }
         }
         else
