@@ -36,23 +36,23 @@ message Packagereq
 //0
 message RegisterMessageOn
 {
-  required string Username;
-  required string Password;
+  required string Username=1;
+  required string Password=2;
 }
 
 //1
 message RegisterMessageBack
 {
-  required string IpAddr;
-  required int32 Port;
-  required int32 Uid;
+  required string IpAddr=1;
+  required int32 Port=2;
+  required int32 Uid=3;
 }
 
 //2
 message RegisterMessageGateBack
 {
-  required int32 Uid;
-  required string Password;
+  required int32 Uid=1;
+  required string Password=2;
 }
 
 //3
@@ -86,15 +86,15 @@ message ClientDataChangeMessage
 //5
 message ClientMoveMessage
 {
-  int32 Uid = 1;
-  int32 Posx = 2;
-  int32 Posy = 3;
-  int32 Posz = 4;
-  int32 Tarx = 5;
-  int32 Tary = 6;
-  int32 Tarz = 7;
-  int32 Speed = 8;
-  int64 Time = 9;
+  required int32 Uid = 1;
+  required int32 Posx = 2;
+  required int32 Posy = 3;
+  required int32 Posz = 4;
+  required int32 Tarx = 5;
+  required int32 Tary = 6;
+  required int32 Tarz = 7;
+  required int32 Speed = 8;
+  required int64 Time = 9;
 }
 
 //6
