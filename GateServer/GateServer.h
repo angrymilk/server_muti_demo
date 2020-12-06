@@ -17,7 +17,7 @@ public:
     int run();
     int on_message(TCPSocket &con);
     void get_one_code(TCPSocket &con);
-    void send(char *data, int size, int uid);
+    void send(TCPSocket &con, char *data, int size, int uid);
     void transmit(TCPSocket &con, std::string &data, int datasize);
     bool check_user(int uid);
 

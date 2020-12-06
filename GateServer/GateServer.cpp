@@ -91,18 +91,18 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         return;
     }
 
-    if (m_player_con.find(uid) == m_player_con.end() && con.get_type == 1)
+    if (m_player_con.find(uid) == m_player_con.end() && con.get_type() == 1)
     {
         m_con_client[uid] = con.get_fd();
         m_player_con[uid] = m_con[uid % GATESERVER_NUM];
     }
 
-    con.send(std::bind(&GateServer::send, this, con, data.c_str(), datasize, uid));
+    con.send(std::bind(&GateServer::send, this, con, const_cast<char *>(data.c_str()), datasize, uid));
 }
 
 void GateServer::send(TCPSocket &con, char *data, int size, int uid)
 {
-    if (con.get_type == 1)
+    if (con.get_type() == 1)
     {
         m_server->m_sockets_map[m_player_con[uid]]->send_data(data, size);
     }
