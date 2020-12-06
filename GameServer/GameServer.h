@@ -27,15 +27,25 @@ public:
     void get_one_code(TCPSocket &con);
     void solve(TCPSocket &con, std::string &data, int datasize);
     void send(char *data, int size);
+    void send_db(char *data, int size, int uid);
+
+    //转发gateserver发来的db增删请求
     void solve_add(TCPSocket &con, std::string &data, int datasize);
+
+    //转发dbserver发来的数据查询信息
+    void transmit_db(TCPSocket &con, std::string &data, int datasize);
+
+    //转发gateserver发来的db查询请求
     void solve_query(TCPSocket &con, std::string &data, int datasize);
+    void parse(char *input, Player &player, int &size);
+    void handle_move(Player &player);
     ThreadTask m_thread_task;
 
 private:
     std::shared_ptr<BaseServer> m_server;
-    std::unordered_map<int, PlayerInfo> m_map_players;
+    std::unordered_map<int, PlayerInfo> m_map_players; // hash fd to gateserver
     std::shared_ptr<SQLServer> m_sql_server;
-    std::unordered_map<int, int> m_player_db;
+    std::unordered_map<int, int> m_player_db; //hash fd to dbservers
     std::vector<int> m_db;
     int db_num;
 };

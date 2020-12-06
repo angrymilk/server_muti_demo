@@ -3,11 +3,7 @@
 #include <stdlib.h>
 GameServer::GameServer()
 {
-    m_redis_server.reset(new RedisServer);
     m_sql_server.reset(new SQLServer);
-    m_redis_server->Init();
-    m_redis_server->Connect();
-
     m_server.reset(new BaseServer("127.0.0.1", 10022));
     m_server->set_read_callback(std::bind(&GameServer::on_message, this, std::placeholders::_1));
     m_thread_task.Start();
@@ -46,13 +42,17 @@ void GameServer::get_one_code(TCPSocket &con)
             else if (((data_size & BIT_COUNT) >> 20) == 3)
             {
                 printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Function\n", __LINE__);
-                con.send_data
-                    solve_query(con, m_sRvMsgBuf, data_size);
+                solve_query(con, m_sRvMsgBuf, data_size);
             }
             else if (((data_size & BIT_COUNT) >> 20) == 5)
             {
                 printf("[GameServer][GameServer.cpp:%d][INFO]: In Move Function\n", __LINE__);
                 move_calculate(con, m_sRvMsgBuf, data_size);
+            }
+            else if (((data_size & BIT_COUNT) >> 20) == 7)
+            {
+                printf("[GameServer][GameServer.cpp:%d][INFO]: In Move Function\n", __LINE__);
+                transmit_db(con, m_sRvMsgBuf, data_size);
             }
             continue;
         }
@@ -128,21 +128,21 @@ void GameServer::handle_move(Player &player)
     int uid = player.get_id();
     Player player_ = m_player_vec[uid];
     int delta_time = player.time - player_.time;
-    float move_rate = delta_time * player_.speed / sqrt((player.tarx - player_.tarx) * (player.tarx - player_.tarx) + (player.tarz - player_.tarz) * (player.tarz - player_.tarz));
-    int x = player.tarx + move_rate * player.posx;
-    int z = player.tarz + move_rate * player.posz;
+    float move_rate = delta_time * player_.speed / sqrt((player.posx - player_.posx) * (player.posx - player_.posx) + (player.posz - player_.posz) * (player.posz - player_.posz));
+    int x = player.posx + move_rate * player.tarx;
+    int z = player.posz + move_rate * player.tarz;
     //int y = player.tary + move_rate * player.posy;
-    if (10 < (x - player_.tarx) * (x - player_.tarx) + (z - player_.tarz) * (z - player_.tarz))
+    if (10 < (x - player_.posx) * (x - player_.posx) + (z - player_.posz) * (z - player_.posz))
     {
         //如果差距太大做拉回的操作
         player.m_is_cheat = true;
         player.m_pos.posx = player_.posx;
-        player.m_pos.posy = player.posy;
-        player.m_pos.posz = player.posz;
-        player.m_pos.tarx = player.tarx;
-        player.m_pos.tary = player.tary;
-        player.m_pos.tarz = player.tarz;
-        player.m_pos.speed = player.speed;
+        player.m_pos.posy = player_.posy;
+        player.m_pos.posz = player_.posz;
+        player.m_pos.tarx = player_.tarx;
+        player.m_pos.tary = player_.tary;
+        player.m_pos.tarz = player_.tarz;
+        player.m_pos.speed = player_.speed;
     }
     else
         m_player_vec[uid] = player;
@@ -152,29 +152,35 @@ void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
 {
     int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
     ClientDataChangeMessage req;
-    //Packageres res;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
     if (m_player_db.find(req.uid()) == m_player_db.end())
     {
         m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
-    con.send(std::bind(&GameServer::send_db, this, data_, temp, uid));
+    con.send_db(std::bind(&GameServer::send_db, this, data, temp, m_player_db[req.uid()]));
 }
 
 void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
 {
     int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
     ClientDataQueryMessage req;
-    //Packageres res;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
     if (m_player_db.find(req.uid()) == m_player_db.end())
     {
         m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
-    con.send(std::bind(&GameServer::send_db, this, data_, temp, uid));
+    con.send_db(std::bind(&GameServer::send_db, this, data, temp, m_player_db[req.uid()]));
 }
 
-void GameServer::send(char *data, int size, int uid)
+void GameServer::transmit_db(TCPSocket &con, std::string &data, int datasize)
+{
+    int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
+    Sqlplayerinfo req;
+    req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
+    con.send_db(std::bind(&GameServer::send_db, this, data, temp, m_map_players[req.uid()].fd));
+}
+
+void GameServer::send(char *data, int size)
 {
     int ret = 0;
     for (unordered_map<int, PlayerInfo>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
@@ -194,30 +200,7 @@ void GameServer::send(char *data, int size, int uid)
     }
 }
 
-void GameServer::send_db(char *data, int size, int uid)
+void GameServer::send_db(char *data, int size, int fd)
 {
-    if (con.get_type == 1)
-    {
-        m_server->m_sockets_map[db[uid]]->send_data(data, size);
-    }
-    else
-    {
-        if ((data & (1 << 30)))
-        {
-            for (unordered_map<int, int>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
-            {
-                m_server->m_sockets_map[db[uid]]->send_data(data, size);
-                if (ret < success)
-                {
-                    printf("[GateServer][GateServer.cpp:%d][ERROR]:Send error ret=%d,errno:%d ,strerror:%s,fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
-                }
-                if (ret > success)
-                {
-                    printf("[GateServer][GateServer.cpp:%d][INFO]:Send try multi ret=%d, errno:%d ,strerror:%s, fd = %d\n", __LINE__, ret, errno, strerror(errno), fd);
-                }
-            }
-        }
-        else
-            m_server->m_sockets_map[db[uid]]->send_data(data, size);
-    }
+    m_server->m_sockets_map[fd]->send_data(data, size);
 }

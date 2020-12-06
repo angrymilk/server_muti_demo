@@ -126,9 +126,3 @@ message Sqlplayerinfo
   repeated Attributeitempro Inuse = 4;
   optional Packagepro Package = 5;
 }
-
-//8
-message DBToGameMessage
-{
-  required int32 Ack;
-}
