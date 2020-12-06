@@ -64,39 +64,39 @@ void DBServer::solve_add(TCPSocket &con, std::string &data, int datasize)
     if (req.value() > 0)
     {
         if (req.inuse())
-            m_sql_server->query(("INSERT INTO UseInfo (player_id,item_id,item_num) VALUES ('" + std::string(req.uid()) + "','" + std::string(req.id()) + "','" + std::string(1) + "')").c_str());
+            m_sql_server->query(("INSERT INTO UseInfo (player_id,item_id,item_num) VALUES ('" + std::to_string(req.uid()) + "','" + std::to_string(req.id()) + "','" + std::to_string(1) + "')").c_str());
         else
         {
-            m_sql_server->query(("select * from PackageInfo where user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
-            std::map<int, std::map<int, std::string>> iteminfo = m_sql_server->parser();
+            m_sql_server->query(("select * from PackageInfo where user_id='" + std::to_string(req.uid()) + "' AND item_id= '" + std::to_string(req.id()) + "';").c_str());
+            std::map<int, std::map<std::string, std::string>> iteminfo = m_sql_server->parser();
             if (iteminfo.size())
             {
                 int num = std::stoi(iteminfo[0]["item_num"]);
                 num += req.value();
-                m_sql_server->query(("UPDATE PackageInfo SET item_num='" + std::string(num) + "' WHERE user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
+                m_sql_server->query(("UPDATE PackageInfo SET item_num='" + std::to_string(num) + "' WHERE user_id='" + std::to_string(req.uid()) + "' AND item_id= '" + std::to_string(req.id()) + "';").c_str());
             }
             else
-                m_sql_server->query(("INSERT INTO PackageInfo (player_id,item_id,item_num) VALUES ('" + std::string(req.uid()) + "','" + std::string(req.id()) + "','" + std::string(1) + "')").c_str());
+                m_sql_server->query(("INSERT INTO PackageInfo (player_id,item_id,item_num) VALUES ('" + std::to_string(req.uid()) + "','" + std::to_string(req.id()) + "','" + std::to_string(1) + "')").c_str());
         }
     }
     else
     {
         if (req.dropfrom())
         {
-            m_sql_server->query(("DELETE FROM UseInfo WHRER item_id='" + std::string(req.id()) + "' AND user_id='" + std::string(req.uid()) + "')").c_str());
+            m_sql_server->query(("DELETE FROM UseInfo WHRER item_id='" + std::to_string(req.id()) + "' AND user_id='" + std::to_string(req.uid()) + "')").c_str());
         }
         else
         {
-            m_sql_server->query(("select * from PackageInfo where user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
-            std::map<int, std::map<int, std::string>> iteminfo = m_sql_server->parser();
+            m_sql_server->query(("select * from PackageInfo where user_id='" + std::to_string(req.uid()) + "' AND item_id= '" + std::to_string(req.id()) + "';").c_str());
+            std::map<int, std::map<std::string, std::string>> iteminfo = m_sql_server->parser();
             int num = std::stoi(iteminfo[0]["item_num"]);
             num += req.value();
             if (num)
             {
-                m_sql_server->query(("UPDATE PackageInfo SET item_num='" + std::string(num) + "' WHERE user_id='" + std::string(req.uid()) + "' AND item_id= '" + std::string(req.id()) + "';").c_str());
+                m_sql_server->query(("UPDATE PackageInfo SET item_num='" + std::to_string(num) + "' WHERE user_id='" + std::to_string(req.uid()) + "' AND item_id= '" + std::to_string(req.id()) + "';").c_str());
             }
             else
-                m_sql_server->query(("DELETE FROM PackageInfo WHERE player_id='" + std::string(req.uid()) + "' AND item_id='" + std::string(req.id()) + "')").c_str());
+                m_sql_server->query(("DELETE FROM PackageInfo WHERE player_id='" + std::to_string(req.uid()) + "' AND item_id='" + std::to_string(req.id()) + "')").c_str());
         }
     }
 }
@@ -110,14 +110,14 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
 
     //玩家个人信息的数据加载
-    m_sql_server->query(("select * from PlayerInfo where user_id='" + std::string(req.uid()) + "';").c_str());
-    std::map<int, std::map<int, std::string>> userinfo = m_sql_server->parser();
+    m_sql_server->query(("select * from PlayerInfo where user_id='" + std::to_string(req.uid()) + "';").c_str());
+    std::map<int, std::map<std::string, std::string>> userinfo = m_sql_server->parser();
     res.set_hp(stoi(userinfo[0]["hp"]));
     res.set_attack(stoi(userinfo[0]["attack"]));
-    res.set_uid(std::stoi(req.uid()));
+    res.set_uid(req.uid());
 
     //道具背包的数据加载
-    m_sql_server->query(("select * from UseInfo where user_id='" + std::string(req.uid()) + "';").c_str());
+    m_sql_server->query(("select * from UseInfo where user_id='" + std::to_string(req.uid()) + "';").c_str());
     std::map<int, std::map<std::string, std::string>> useinfo = m_sql_server->parser();
     for (int i = 0;; i++)
     {
@@ -127,7 +127,7 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
         int item_id = std::stoi(useinfo[i]["item_id"]);
         temp->set_id(item_id);
         temp->set_amount(std::stoi(useinfo[i]["item_num"]));
-        m_sql_server->query(("select * from ItemInfo where item_id='" + std::string(item_id) + "';").c_str());
+        m_sql_server->query(("select * from ItemInfo where item_id='" + std::to_string(item_id) + "';").c_str());
         std::map<int, std::map<std::string, std::string>> iteminfo = m_sql_server->parser();
         temp->set_eltemtype(std::stoi(iteminfo[0]["item_type"]));
         temp->add_attribute(std::stoi(iteminfo[0]["eltem_Module_Base_Hp"]));
@@ -140,7 +140,7 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
 
     //背包的数据加载
     Packagepro *pack = res.mutable_package();
-    m_sql_server->query(("select * from PackageInfo where user_id='" + std::string(req.uid()) + "';").c_str());
+    m_sql_server->query(("select * from PackageInfo where user_id='" + std::to_string(req.uid()) + "';").c_str());
     std::map<int, std::map<std::string, std::string>> packageinfo = m_sql_server->parser();
     for (int i = 0;; i++)
     {
@@ -150,7 +150,7 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
         int item_id = std::stoi(packageinfo[i]["item_id"]);
         temp->set_id(item_id);
         temp->set_amount(std::stoi(packageinfo[i]["item_num"]));
-        m_sql_server->query(("select * from ItemInfo where item_id='" + std::string(item_id) + "';").c_str());
+        m_sql_server->query(("select * from ItemInfo where item_id='" + std::to_string(item_id) + "';").c_str());
         std::map<int, std::map<std::string, std::string>> iteminfo = m_sql_server->parser();
         temp->set_eltemtype(std::stoi(iteminfo[0]["item_type"]));
         temp->add_attribute(std::stoi(iteminfo[0]["eltem_Module_Base_Hp"]));
@@ -168,7 +168,7 @@ void DBServer::solve_query(TCPSocket &con, std::string &data, int datasize)
     int codeLength = 0;
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&DBServer::send, this, data_, temp));
+    con.send(std::bind(&DBServer::send, this, data_, temp, req.uid()));
 }
 
 void DBServer::send(char *data, int size, int uid)

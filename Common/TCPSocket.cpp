@@ -40,7 +40,7 @@ void TCPSocket::close_socket()
     m_fd = -1;
 }
 
-int get_type()
+int TCPSocket::get_type()
 {
     return m_type;
 }

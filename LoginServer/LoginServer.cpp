@@ -8,6 +8,7 @@ LoginServer::LoginServer()
     m_server->set_read_callback(std::bind(&LoginServer::on_message, this, std::placeholders::_1));
     m_con.resize(1);
     m_con[0] = m_server->add_client_socket(10023, "127.0.0.1", 8888, "127.0.0.1");
+    m_gateserver_num = 1;
 }
 
 int LoginServer::run()
@@ -37,7 +38,7 @@ void LoginServer::get_one_code(TCPSocket &con)
             if ((data_size & BIT_COUNT) == 0)
             {
                 printf("[LoginServer][LoginServer.cpp:%d][INFO]: In Data Register Function\n", __LINE__);
-                register(con, m_sRvMsgBuf, data_size);
+                register_(con, m_sRvMsgBuf, data_size);
             }
             continue;
         }
@@ -49,23 +50,23 @@ void LoginServer::get_one_code(TCPSocket &con)
     }
 }
 
-void LoginServer::register(TCPSocket &con, std::string &data, int datasize)
+void LoginServer::register_(TCPSocket &con, std::string &data, int datasize)
 {
     RegisterMessageOn req;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, datasize);
     m_sql_server->query(("select uid,user_name,user_password from PlayerInfo where user_name='" + req.username() + "';").c_str());
-    std::map<std::string, std::map<std::string, std::string>> password = m_sql_server->parser();
-    std::cout << password[req.username()]["user_password"] << "    " << req.password() << "\n";
-    if (password[req.username()]["user_password"] == req.password())
+    std::map<int, std::map<std::string, std::string>> password = m_sql_server->parser();
+    std::cout << password[0]["user_password"] << "    " << req.password() << "\n";
+    if (password[0]["user_password"] == req.password())
         printf("[LoginServer][LoginServer.cpp:%d][INFO]:密码匹配成功\n", __LINE__);
     else
         printf("[LoginServer][LoginServer.cpp:%d][ERROR]:密码匹配失败  ！！！！！！！！！！！！\n", __LINE__);
-    m_con_map[password[req.username()]["uid"]] = 0;
+    m_con_map[std::stoi(password[0]["uid"])] = 0; //目前只有一个，但是这里可以被扩展多个gateserver
 
     RegisterMessageBack res;
-    res.set_ipaddr(password[req.username()]["ip_address"]);
-    res.set_port(password[req.username()]["port"]);
-    res.set_uid(password[req.username()]["uid"]);
+    res.set_ipaddr(password[0]["ip_address"]);
+    res.set_port(std::stoi(password[0]["port"]));
+    res.set_uid(std::stoi(password[0]["uid"]));
 
     char data_[COMMON_BUFFER_SIZE];
     MsgHead head;
@@ -74,18 +75,18 @@ void LoginServer::register(TCPSocket &con, std::string &data, int datasize)
     int codeLength = 0;
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&LoginServer::send, this, data_, temp, res.uid()));
+    con.send(std::bind(&LoginServer::send_gate, this, data_, temp, res.uid()));
 
     RegisterMessageGateBack res_gate;
-    res_gate.set_password(password[req.username()]["ip_address"]);
-    res_gate.set_uid(password[req.username()]["uid"]);
+    res_gate.set_password(password[0]["user_password"]);
+    res_gate.set_uid(std::stoi(password[0]["uid"]));
     MsgHead head_;
     head.m_message_len = (MESSAGE_HEAD_SIZE + res_gate.ByteSize()) | (1 << 21);
     int temp = MESSAGE_HEAD_SIZE + res_gate.ByteSize();
     int codeLength = 0;
     head.encode(data_, codeLength);
     res_gate.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res_gate.ByteSize());
-    con.send_client(std::bind(&LoginServer::send, this, data_, temp, res_gate.uid()));
+    con.send(std::bind(&LoginServer::send_client, this, data_, temp, res_gate.uid()));
 };
 
 void LoginServer::send_gate(char *data, int size, int uid)

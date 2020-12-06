@@ -31,13 +31,11 @@ public:
                 m_vec[0][0] = m_factory.create(info, 0);
                 m_posmap[info.id] = std::make_pair(0, 0);
                 m_vec[0][0]->set_amount(value);
-                sql_server->query(("INSERT INTO PackageInfo ( player_id, item_id,item_num ) VALUES ( " + std::to_string(uid) + "," + std::to_string(info.id) + "," + std::to_string(0) + ");").c_str());
             }
             else
             {
                 int tt = m_vec[0][0]->get_amount();
                 m_vec[0][0]->set_amount(tt + value);
-                sql_server->query(("UPDATE PackageInfo SET item_num=" + std::to_string(value) + " WHERE item_id=" + std::to_string(info.id) + ";").c_str());
             }
         }
         else if (info.mtype == EltemType::eEQUIP)
@@ -48,14 +46,12 @@ public:
                     return -1;
                 pos = m_posmap[info.id].second;
                 m_vec[1][pos]->set_amount(value + m_vec[1][pos]->get_amount());
-                sql_server->query(("UPDATE PackageInfo SET item_num=" + std::to_string(m_vec[1][pos]->get_amount()) + " WHERE item_id=" + std::to_string(info.id) + ";").c_str());
             }
             else
             {
                 m_vec[1][pos] = m_factory.create(info, 0);
                 m_posmap[info.id] = std::make_pair(1, pos);
                 m_vec[1][pos]->set_amount(value);
-                sql_server->query(("INSERT INTO PackageInfo ( player_id, item_id,item_num ) VALUES ( " + std::to_string(uid) + "," + std::to_string(info.id) + "," + std::to_string(value) + ");").c_str());
             }
         }
         else if (info.mtype == EltemType::eCONSUME)
@@ -66,14 +62,12 @@ public:
                     return -1;
                 pos = m_posmap[info.id].second;
                 m_vec[2][pos]->set_amount(value + m_vec[2][pos]->get_amount());
-                sql_server->query(("UPDATE PackageInfo SET item_num=" + std::to_string(m_vec[2][pos]->get_amount()) + " WHERE item_id=" + std::to_string(info.id) + ";").c_str());
             }
             else
             {
                 m_vec[2][pos] = m_factory.create(info, 0);
                 m_posmap[info.id] = std::make_pair(2, pos);
                 m_vec[2][pos]->set_amount(value);
-                sql_server->query(("INSERT INTO PackageInfo ( player_id, item_id,item_num ) VALUES ( " + std::to_string(uid) + "," + std::to_string(info.id) + "," + std::to_string(value) + ");").c_str());
             }
         }
         else
@@ -94,12 +88,10 @@ public:
                 m_vec[m_posmap[id].first][m_posmap[id].second].reset();
                 m_num[m_posmap[id].first]--;
                 m_posmap.erase(id);
-                sql_server->query(("DELETE FROM PackageInfo WHERE item_id=" + std::to_string(id) + ";").c_str());
                 return p;
             }
             m_vec[m_posmap[id].first][m_posmap[id].second]->set_amount(tmp + value);
             auto p = m_vec[m_posmap[id].first][m_posmap[id].second];
-            sql_server->query(("UPDATE PackageInfo SET item_num=" + std::to_string(tmp + value) + " WHERE item_id=" + std::to_string(id) + ";").c_str());
             return p;
         }
         else

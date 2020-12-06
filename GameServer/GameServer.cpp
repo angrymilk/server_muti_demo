@@ -1,6 +1,7 @@
 #include "GameServer.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 GameServer::GameServer()
 {
     m_sql_server.reset(new SQLServer);
@@ -164,7 +165,7 @@ void GameServer::solve_add(TCPSocket &con, std::string &data, int datasize)
         m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
     make_fd(req.uid(), con.get_fd());
-    con.send(std::bind(&GameServer::send_db, this, data, datasize, m_player_db[req.uid()]));
+    con.send(std::bind(&GameServer::send_db, this, const_cast<char *>(data.c_str()), datasize, m_player_db[req.uid()]));
 }
 
 void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
@@ -177,7 +178,7 @@ void GameServer::solve_query(TCPSocket &con, std::string &data, int datasize)
         m_player_db[req.uid()] = m_db[db_num % DB_NUM];
     }
     make_fd(req.uid(), con.get_fd());
-    con.send(std::bind(&GameServer::send_db, this, data, datasize, m_player_db[req.uid()]));
+    con.send(std::bind(&GameServer::send_db, this, const_cast<char *>(data.c_str()), datasize, m_player_db[req.uid()]));
 }
 
 void GameServer::transmit_db(TCPSocket &con, std::string &data, int datasize)
@@ -185,7 +186,7 @@ void GameServer::transmit_db(TCPSocket &con, std::string &data, int datasize)
     int bodySize = (datasize & ((1 << 20) - 1)) - MESSAGE_HEAD_SIZE;
     Sqlplayerinfo req;
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, bodySize);
-    con.send(std::bind(&GameServer::send_db, this, data, datasize, m_map_players[req.uid()].fd));
+    con.send(std::bind(&GameServer::send_db, this, const_cast<char *>(data.c_str()), datasize, m_map_players[req.uid()].fd));
 }
 
 void GameServer::send(char *data, int size)

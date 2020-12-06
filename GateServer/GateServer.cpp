@@ -46,7 +46,7 @@ void GateServer::get_one_code(TCPSocket &con)
 
 bool GateServer::check_user(int uid)
 {
-    if (m_client_check.find(uid) == m_client_check.end() || m_user_check[uid] == false)
+    if (m_client_check.find(uid) == m_client_check.end() || m_client_check[uid] == false)
         return false;
     return true;
 }
@@ -83,7 +83,7 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         if (m_user_pass.find(req.uid()) == m_user_pass.end())
             m_user_pass[req.uid()] = req.password();
         else
-            m_user_check[req.uid()] = true;
+            m_client_check[req.uid()] = true;
     }
     else
     {

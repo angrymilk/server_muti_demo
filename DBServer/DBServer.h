@@ -3,16 +3,10 @@
 #define MYSQLPP_SSQLS_NO_STATICS
 #include "../Common/BaseServer.h"
 #include "../Common/MesHead.h"
-#include "Player.h"
 #include "../Common/TCPSocket.h"
 #include "../Common/ThreadTask.h"
 #include "../Common/RedisServer.h"
 #include "../Common/SQLServer.h"
-struct PlayerInfo
-{
-    int fd;
-    shared_ptr<Player> player;
-};
 
 class DBServer
 {
