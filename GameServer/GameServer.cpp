@@ -4,7 +4,6 @@
 #include <math.h>
 GameServer::GameServer()
 {
-    m_sql_server.reset(new SQLServer);
     m_server.reset(new BaseServer("127.0.0.1", 10022));
     m_server->set_read_callback(std::bind(&GameServer::on_message, this, std::placeholders::_1));
     m_thread_task.Start();

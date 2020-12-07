@@ -1,4 +1,6 @@
 pwd=`pwd`
+rm GameServer DBServer LoginServer GateServer
+
 cd ${pwd}/ProtoSrc
 sh build.sh
 

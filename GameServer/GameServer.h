@@ -47,8 +47,7 @@ public:
 private:
     std::shared_ptr<BaseServer> m_server;
     std::unordered_map<int, PlayerInfo> m_map_players; // hash fd to gateserver
-    std::shared_ptr<SQLServer> m_sql_server;
-    std::unordered_map<int, int> m_player_db; //hash fd to dbservers
+    std::unordered_map<int, int> m_player_db;          //hash fd to dbservers
     std::vector<int> m_db;
     int db_num;
 };

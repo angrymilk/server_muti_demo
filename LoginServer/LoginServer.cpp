@@ -7,7 +7,7 @@ LoginServer::LoginServer()
     m_server.reset(new BaseServer("127.0.0.1", 10023));
     m_server->set_read_callback(std::bind(&LoginServer::on_message, this, std::placeholders::_1));
     m_con.resize(1);
-    m_con[0] = m_server->add_client_socket(10023, "127.0.0.1", 8888, "127.0.0.1");
+    m_con[0] = m_server->add_client_socket(10023, "127.0.0.1", 3001, "127.0.0.1");
     m_gateserver_num = 1;
 }
 
@@ -75,26 +75,26 @@ void LoginServer::register_(TCPSocket &con, std::string &data, int datasize)
     int codeLength = 0;
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&LoginServer::send_gate, this, data_, temp, res.uid()));
+    con.send(std::bind(&LoginServer::send_client, this, data_, temp, res.uid()));
 
     RegisterMessageGateBack res_gate;
     res_gate.set_password(password[0]["user_password"]);
     res_gate.set_uid(std::stoi(password[0]["uid"]));
     MsgHead head_;
     head.m_message_len = (MESSAGE_HEAD_SIZE + res_gate.ByteSize()) | (1 << 21);
-    int temp = MESSAGE_HEAD_SIZE + res_gate.ByteSize();
-    int codeLength = 0;
-    head.encode(data_, codeLength);
+    int temp_ = MESSAGE_HEAD_SIZE + res_gate.ByteSize();
+    int codeLength_ = 0;
+    head.encode(data_, codeLength_);
     res_gate.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res_gate.ByteSize());
-    con.send(std::bind(&LoginServer::send_client, this, data_, temp, res_gate.uid()));
+    con.send(std::bind(&LoginServer::send_gate, this, data_, temp_, res_gate.uid()));
 };
 
-void LoginServer::send_gate(char *data, int size, int uid)
+void LoginServer::send_client(char *data, int size, int uid)
 {
     m_server->m_sockets_map[m_fd_map[uid]]->send_data(data, size);
 }
 
-void LoginServer::send_client(char *data, int size, int uid)
+void LoginServer::send_gate(char *data, int size, int uid)
 {
     m_server->m_sockets_map[m_con[m_con_map[uid]]]->send_data(data, size);
 }
