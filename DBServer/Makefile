@@ -30,7 +30,7 @@ PUBLIC_INC  = -I$(COMMON_INCLUDE_DIR)
 NEW_PUBLIC_INC = -I$(NEW_COMMON_INCLUDE_DIR)
 LIB_DIR = ../Common/Libs
 NEW_LIB_DIR = ../Package/Libs
-PUBLIC_LIB  = -L/usr/local/lib/ -L$(LIB_DIR) -L$(NEW_LIB_DIR)
+PUBLIC_LIB  = -L/usr/local/lib/ -L/usr/lib64/mysql/ -L$(LIB_DIR) -L$(NEW_LIB_DIR)
 SRC = $(wildcard *.cpp) $(wildcard *.c) $(wildcard *.cxx) $(wildcard */*.cpp) $(wildcard */*/*.cpp) $(wildcard */*/*/*.cpp) $(wildcard */*/*/*/*.cpp) $(wildcard */*/*/*/*/*.cpp)
 OBJS = $(addprefix $(OBJ_DIR)/,$(subst .cpp,.o,$(SRC)))
 

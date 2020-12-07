@@ -5,7 +5,7 @@ CXX	= g++
 AR	= ar
 
 ARFLAGS = cr
-CPPFLAGS= -g -lpthread -lmysqlclient -Wall $(INC) -fPIC -L/usr/lib64/ -lhiredis -lpthread `pkg-config --cflags --libs protobuf` -std=c++11 -Lpthread
+CPPFLAGS= -g -lpthread -lmysqlclient -Wall $(INC) -fPIC -L/usr/lib64/ -L/usr/lib64/mysql/ -lhiredis -lpthread `pkg-config --cflags --libs protobuf` -std=c++11 -Lpthread
 
 TARGET	= $(TARGET_DIR)/libcommon.a
 OBJ_DIR	= ./.objs

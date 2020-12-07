@@ -44,7 +44,7 @@ std::map<int, std::map<std::string, std::string>> SQLServer::parser()
         {
             if (i == 0)
             {
-                mp.insert(0, std::map<std::string, std::string>());
+                //mp.insert(0, std::map<std::string, std::string>());
                 index = num;
             }
             else

@@ -17,10 +17,10 @@ make clean && make
 cd ${pwd}/GateServer
 make clean && make
 
-cd ${pwd}LoginServer
+cd ${pwd}/LoginServer
 make clean && make
 
-cd ${pwd}DBServer
+cd ${pwd}/DBServer
 make clean && make
 
 mv ../Bin/* ../
