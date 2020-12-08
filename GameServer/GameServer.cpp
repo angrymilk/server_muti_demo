@@ -4,7 +4,7 @@
 #include <math.h>
 GameServer::GameServer()
 {
-    m_server.reset(new BaseServer("127.0.0.1", 10022));
+    m_server.reset(new BaseServer("127.0.0.1", 3001));
     m_server->set_read_callback(std::bind(&GameServer::on_message, this, std::placeholders::_1));
     m_thread_task.Start();
 }

@@ -318,11 +318,14 @@ int TCPSocket::process_data()
     int ret = recv_data();
     if (ret < 0)
     {
-        if (ret == -3)
+        if (ret == -3 || ret == -6)
             printf("[Common][TCPSocket.cpp:%d][WARNING]:recv_data failed fd:%d errorcode:%d\n", __LINE__, m_fd, ret);
         else
+        {
             printf("[Common][TCPSocket.cpp:%d][ERROR]:recv_data failed fd:%d errorcode:%d\n", __LINE__, m_fd, ret);
-        return ret;
+            return ret;
+        }
+        return success;
     }
 
     printf("[Common][TCPSocket.cpp:%d][INFO]:Get_One_Code And Process_CallBack\n", __LINE__);

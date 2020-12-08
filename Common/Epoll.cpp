@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <cstring>
 
-Epoll::Epoll() {}
+Epoll::Epoll() { m_init = false; }
 
 Epoll::~Epoll()
 {
@@ -16,6 +16,9 @@ Epoll::~Epoll()
 
 int Epoll::epoll_init(int size)
 {
+    if (m_init)
+        return 0;
+    m_init = true;
     m_size = size;
     memset(&m_epoll_event, 0, sizeof(m_epoll_event));
     m_epoll_event.events = EPOLLIN | EPOLLERR | EPOLLHUP;
@@ -49,7 +52,7 @@ int Epoll::epoll_add(int fd)
         return -1;
     }
     m_epoll_event.data.fd = fd;
-    printf("[Common][Epoll.cpp:%d]:Add Fd = [%d] !\n",__LINE__,fd);
+    printf("[Common][Epoll.cpp:%d]:Add Fd = [%d] !\n", __LINE__, fd);
     return epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &m_epoll_event);
 }
 

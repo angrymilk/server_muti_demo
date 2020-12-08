@@ -79,7 +79,6 @@ int BaseServer::init()
         printf("[Common][BaseServer.cpp:%d][ERROR]:epoll_init failed\n", __LINE__);
         return fail;
     }
-    printf("[Common][BaseServer.cpp:%d][INFO]:Server Epoll Has Inited...\n", __LINE__);
 
     if (m_epoll.epoll_add(m_server_socket->get_fd()) < 0)
     {
@@ -119,12 +118,21 @@ int BaseServer::add_client_socket(int client_port, std::string client_ip, int se
     if (ret)
         return ret;
 
-    if (m_epoll.epoll_add(conn_socket->get_fd()) < 0)
+    if (m_epoll.epoll_init(MAX_SOCKET_COUNT) < 0)
     {
-        printf("m_epoll.epoll_add fd:%d failed\n", conn_socket->get_fd());
+        printf("[Common][BaseServer.cpp:%d][ERROR]:epoll_init failed\n", __LINE__);
+        return fail;
+    }
+    printf("[Common][BaseServer.cpp:%d][INFO]:Server Epoll Has Inited...\n", __LINE__);
+
+    int re = m_epoll.epoll_add(conn_socket->get_fd());
+    if (re < 0)
+    {
+        printf("m_epoll.epoll_add fd:%d   %d failed\n", conn_socket->get_fd(), errno);
         return fail;
     }
     m_sockets_map[conn_socket->get_fd()] = conn_socket;
+    printf("链接 gate的fd=%d\n", conn_socket->get_fd());
     return conn_socket->get_fd();
 }
 
@@ -136,6 +144,7 @@ int BaseServer::epoll_recv()
         struct epoll_event *pstEvent = m_epoll.get_event(i);
         int socketfd = pstEvent->data.fd;
         std::shared_ptr<TCPSocket> pstSocket = m_sockets_map[socketfd];
+        printf("------------------------------    %d\n", socketfd);
         if (pstSocket == NULL || pstSocket->get_fd() < 0)
         {
             printf("[Common][BaseServer.cpp:%d][ERROR]:get_server_tcpsocket failed fd:%d\n", __LINE__, socketfd);

@@ -25,6 +25,7 @@ private:
     int m_epoll_fd;
     struct epoll_event *m_pevents;
     struct epoll_event m_epoll_event;
+    bool m_init;
 };
 
 #endif //DEMO_EPOLL_H

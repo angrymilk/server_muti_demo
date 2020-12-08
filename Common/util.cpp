@@ -61,16 +61,18 @@ int connect_nonblock(int fd, struct sockaddr_in *serv_addr, socklen_t addrlen, i
     {
         return -1;
     }
-
+    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++  %d\n", errno);
     int flag = 0;
     flag = fcntl(fd, F_GETFL, 0);
     if (flag < 0)
     {
+        printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++  %d\n", errno);
         return -1;
     }
 
     if (fcntl(fd, F_SETFL, (flag | O_NONBLOCK)) < 0)
     {
+        printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
         return -1;
     }
 
@@ -80,6 +82,7 @@ int connect_nonblock(int fd, struct sockaddr_in *serv_addr, socklen_t addrlen, i
     ret = connect(fd, (const sockaddr *)serv_addr, addrlen);
     if (ret < 0)
     {
+        printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
         if (errno != EINPROGRESS)
         {
             return -1;

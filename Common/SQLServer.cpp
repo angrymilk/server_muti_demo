@@ -42,15 +42,8 @@ std::map<int, std::map<std::string, std::string>> SQLServer::parser()
     {
         for (int32_t i = 0; i < num_fields; ++i)
         {
-            if (i == 0)
-            {
-                //mp.insert(0, std::map<std::string, std::string>());
-                index = num;
-            }
-            else
-            {
-                mp[index].insert(std::make_pair(field[i].name, row[i]));
-            }
+            std::string key = field[i].name, value = row[i];
+            mp[num].insert(std::make_pair(key, value));
             printf("[%s]=>[%s]\n", field[i].name, row[i]);
         }
         num++;
