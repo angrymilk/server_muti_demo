@@ -59,7 +59,8 @@ message RegisterMessageGateBack
 message ClientDataQueryMessage
 {
   required int32 Uid = 1;                 //玩家id
-  required int32 Init = 2;                
+  required int32 Init = 2;  
+  required string Password= 3;              
 }
 
 message Modelinfo
@@ -81,6 +82,7 @@ message ClientDataChangeMessage
   optional bool Inuse = 7;                       //道具是扔了还是从背包中拿出使用
   optional bool Dropfrom = 8;                    //道具从使用中丢弃还是直接从背包中丢弃
   repeated Modelinfo Mode = 9;
+  required string Password= 10;
 }
 
 //5
@@ -95,6 +97,7 @@ message ClientMoveMessage
   required int32 Tarz = 7;
   required int32 Speed = 8;
   required int64 Time = 9;
+  required string Password = 10;
 }
 
 //6

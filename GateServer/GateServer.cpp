@@ -56,6 +56,7 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
     int uid = 0;
     if (((datasize & BIT_COUNT) >> 20) == 3)
     {
+        printf("Type == 3\n");
         ClientDataQueryMessage req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
         uid = req.uid();
@@ -67,6 +68,7 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
     }
     else if (((datasize & BIT_COUNT) >> 20) == 4)
     {
+        printf("Type == 4\n");
         ClientDataChangeMessage req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
         uid = req.uid();
@@ -80,10 +82,12 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
     {
         RegisterMessageGateBack req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
+        printf("Type == 2\n");
         if (m_user_pass.find(req.uid()) == m_user_pass.end())
             m_user_pass[req.uid()] = req.password();
         else
             m_client_check[req.uid()] = true;
+        return;
     }
     else
     {
