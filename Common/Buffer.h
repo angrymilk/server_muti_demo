@@ -7,10 +7,10 @@ class Buffer
 public:
     Buffer()
     {
-        m_recv_buffer = new char[100000];
+        m_recv_buffer = new char[1000000];
         m_recv_head = 0;
         m_recv_tail = 0;
-        m_recv_buffer_size = 10240;
+        m_recv_buffer_size = 802400;
     }
 
     ~Buffer()

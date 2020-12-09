@@ -62,6 +62,7 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         uid = req.uid();
         if (m_user_pass[uid] != req.password())
         {
+            std::cout << m_user_pass[uid] << "    " << req.password() << "\n";
             printf("[GateServer][GateServer.cpp:%d][ERROR]:Check Uers Error \n", __LINE__);
             return;
         }

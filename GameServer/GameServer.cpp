@@ -78,6 +78,12 @@ void GameServer::move_calculate(TCPSocket &con, std::string &data, int datasize)
     //handle_move(temp);
     char data_[COMMON_BUFFER_SIZE];
     int outsize = 0;
+    srand((unsigned)time(NULL));
+    for (int i = 0; i < 20; i++)
+    {
+        int temp = rand() % 10000000;
+        temp /= 11357;
+    }
     serialize(data_, temp, outsize);
     vector<int> deletePlayer;
     for (unordered_map<int, PlayerInfo>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
