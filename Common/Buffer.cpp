@@ -24,12 +24,14 @@ int Buffer::copy_front()
         {
             //注意: 要使用memmove而不是memcpy
             //memcpy的__restrict__关键字不允许内存重叠
+            printf("++++++++++++++++++++++++++++++++++++  \n");
             memmove(&m_recv_buffer[0], &m_recv_buffer[m_recv_head], size_t(m_recv_tail - m_recv_head));
             m_recv_tail -= m_recv_head;
             m_recv_head = 0;
         }
         else
         {
+            printf("++++++++++++++++++++++++++++++++++++  ??????   %d %d\n", m_recv_buffer_size, m_recv_tail);
             ret = (int)enmConnErrorCode_recv_notenouth_buffer;
             return ret;
         }
@@ -111,7 +113,7 @@ int Buffer::get_one_code(char *data, size_t &size)
     }
 
     size = (size_t)(code_size & ((1 << 20) - 1));
-    //printf("+++++++++++++ -----------    %d\n", size);
+    printf("+++++++++++++ -----------    %d\n", size);
     memcpy(data, &m_recv_buffer[m_recv_head], size);
     m_recv_head += size;
     size = (size_t)code_size;

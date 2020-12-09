@@ -75,9 +75,10 @@ void GameServer::move_calculate(TCPSocket &con, std::string &data, int datasize)
     Player temp(-1);
     parse(const_cast<char *>(data.c_str()), temp, datasize);
     make_fd(temp.uin(), con.get_fd());
-    handle_move(temp);
+    //handle_move(temp);
     char data_[COMMON_BUFFER_SIZE];
-    serialize(data_, temp);
+    int outsize = 0;
+    serialize(data_, temp, outsize);
     vector<int> deletePlayer;
     for (unordered_map<int, PlayerInfo>::iterator iter = m_map_players.begin(); iter != m_map_players.end(); iter++)
     {
@@ -91,10 +92,10 @@ void GameServer::move_calculate(TCPSocket &con, std::string &data, int datasize)
     }
     for (vector<int>::iterator iter = deletePlayer.begin(); iter != deletePlayer.end(); iter++)
         m_map_players.erase(*iter);
-    con.send(std::bind(&GameServer::send, this, data_, datasize));
+    con.send(std::bind(&GameServer::send, this, data_, outsize));
 }
 
-void GameServer::serialize(char *data, Player &temp)
+void GameServer::serialize(char *data, Player &temp, int &size)
 {
     //序列化处理
     ClientMoveMessage res;
@@ -107,8 +108,10 @@ void GameServer::serialize(char *data, Player &temp)
     res.set_tarz(temp.m_pos.tarz);
     res.set_speed(temp.m_pos.speed);
     res.set_time(temp.m_pos.time);
+    res.set_password("123456");
     MsgHead head;
-    head.m_message_len = res.ByteSize() + MESSAGE_HEAD_SIZE;
+    head.m_message_len = ((res.ByteSize() + MESSAGE_HEAD_SIZE) | (1 << 20) | (1 << 22));
+    size = res.ByteSize() + MESSAGE_HEAD_SIZE;
     int codeLength = 0;
     head.encode(data, codeLength);
     res.SerializePartialToArray(data + codeLength, res.ByteSize());

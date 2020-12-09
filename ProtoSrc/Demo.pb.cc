@@ -370,8 +370,10 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Demo_2eproto::offsets[] PROTOB
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::ClientDataQueryMessage, uid_),
   PROTOBUF_FIELD_OFFSET(::ClientDataQueryMessage, init_),
-  0,
+  PROTOBUF_FIELD_OFFSET(::ClientDataQueryMessage, password_),
   1,
+  2,
+  0,
   PROTOBUF_FIELD_OFFSET(::Modelinfo, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::Modelinfo, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -397,15 +399,17 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Demo_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::ClientDataChangeMessage, inuse_),
   PROTOBUF_FIELD_OFFSET(::ClientDataChangeMessage, dropfrom_),
   PROTOBUF_FIELD_OFFSET(::ClientDataChangeMessage, mode_),
-  0,
+  PROTOBUF_FIELD_OFFSET(::ClientDataChangeMessage, password_),
   1,
   2,
   3,
-  5,
   4,
   6,
+  5,
   7,
+  8,
   ~0u,
+  0,
   PROTOBUF_FIELD_OFFSET(::ClientMoveMessage, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::ClientMoveMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -420,7 +424,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Demo_2eproto::offsets[] PROTOB
   PROTOBUF_FIELD_OFFSET(::ClientMoveMessage, tarz_),
   PROTOBUF_FIELD_OFFSET(::ClientMoveMessage, speed_),
   PROTOBUF_FIELD_OFFSET(::ClientMoveMessage, time_),
-  0,
+  PROTOBUF_FIELD_OFFSET(::ClientMoveMessage, password_),
   1,
   2,
   3,
@@ -429,6 +433,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_Demo_2eproto::offsets[] PROTOB
   6,
   7,
   8,
+  9,
+  0,
   PROTOBUF_FIELD_OFFSET(::ClientCheckMessage, _has_bits_),
   PROTOBUF_FIELD_OFFSET(::ClientCheckMessage, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -481,14 +487,14 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 52, 59, sizeof(::RegisterMessageOn)},
   { 61, 69, sizeof(::RegisterMessageBack)},
   { 72, 79, sizeof(::RegisterMessageGateBack)},
-  { 81, 88, sizeof(::ClientDataQueryMessage)},
-  { 90, 98, sizeof(::Modelinfo)},
-  { 101, 115, sizeof(::ClientDataChangeMessage)},
-  { 124, 138, sizeof(::ClientMoveMessage)},
-  { 147, 154, sizeof(::ClientCheckMessage)},
-  { 156, 165, sizeof(::Attributeitempro)},
-  { 169, -1, sizeof(::Packagepro)},
-  { 175, 185, sizeof(::Sqlplayerinfo)},
+  { 81, 89, sizeof(::ClientDataQueryMessage)},
+  { 92, 100, sizeof(::Modelinfo)},
+  { 103, 118, sizeof(::ClientDataChangeMessage)},
+  { 128, 143, sizeof(::ClientMoveMessage)},
+  { 153, 160, sizeof(::ClientCheckMessage)},
+  { 162, 171, sizeof(::Attributeitempro)},
+  { 175, -1, sizeof(::Packagepro)},
+  { 181, 191, sizeof(::Sqlplayerinfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -522,26 +528,27 @@ const char descriptor_table_protodef_Demo_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "d\030\002 \002(\t\"@\n\023RegisterMessageBack\022\016\n\006IpAddr"
   "\030\001 \002(\t\022\014\n\004Port\030\002 \002(\005\022\013\n\003Uid\030\003 \002(\005\"8\n\027Reg"
   "isterMessageGateBack\022\013\n\003Uid\030\001 \002(\005\022\020\n\010Pas"
-  "sword\030\002 \002(\t\"3\n\026ClientDataQueryMessage\022\013\n"
-  "\003Uid\030\001 \002(\005\022\014\n\004Init\030\002 \002(\005\"Q\n\tModelinfo\022\021\n"
-  "\tModeltype\030\001 \002(\005\022\025\n\rAttributetype\030\002 \003(\005\022"
-  "\032\n\022Attributetypevalue\030\003 \003(\005\"\256\001\n\027ClientDa"
-  "taChangeMessage\022\021\n\tEltemtype\030\001 \002(\005\022\r\n\005Va"
-  "lue\030\002 \002(\005\022\013\n\003Uid\030\003 \002(\005\022\n\n\002Id\030\004 \002(\005\022\020\n\010Us"
-  "emoney\030\005 \001(\010\022\013\n\003Pos\030\006 \001(\005\022\r\n\005Inuse\030\007 \001(\010"
-  "\022\020\n\010Dropfrom\030\010 \001(\010\022\030\n\004Mode\030\t \003(\0132\n.Model"
-  "info\"\221\001\n\021ClientMoveMessage\022\013\n\003Uid\030\001 \002(\005\022"
-  "\014\n\004Posx\030\002 \002(\005\022\014\n\004Posy\030\003 \002(\005\022\014\n\004Posz\030\004 \002("
-  "\005\022\014\n\004Tarx\030\005 \002(\005\022\014\n\004Tary\030\006 \002(\005\022\014\n\004Tarz\030\007 "
-  "\002(\005\022\r\n\005Speed\030\010 \002(\005\022\014\n\004Time\030\t \002(\003\"3\n\022Clie"
-  "ntCheckMessage\022\013\n\003Uid\030\001 \002(\005\022\020\n\010Password\030"
-  "\002 \002(\t\"T\n\020Attributeitempro\022\n\n\002Id\030\001 \002(\005\022\016\n"
-  "\006Amount\030\002 \001(\005\022\021\n\tEltemtype\030\003 \001(\005\022\021\n\tattr"
-  "ibute\030\004 \003(\005\"0\n\nPackagepro\022\"\n\007Itempro\030\001 \003"
-  "(\0132\021.Attributeitempro\"x\n\rSqlplayerinfo\022\n"
-  "\n\002Hp\030\001 \002(\005\022\016\n\006Attack\030\002 \002(\005\022\013\n\003Uid\030\003 \002(\005\022"
-  " \n\005Inuse\030\004 \003(\0132\021.Attributeitempro\022\034\n\007Pac"
-  "kage\030\005 \001(\0132\013.Packagepro"
+  "sword\030\002 \002(\t\"E\n\026ClientDataQueryMessage\022\013\n"
+  "\003Uid\030\001 \002(\005\022\014\n\004Init\030\002 \002(\005\022\020\n\010Password\030\003 \002"
+  "(\t\"Q\n\tModelinfo\022\021\n\tModeltype\030\001 \002(\005\022\025\n\rAt"
+  "tributetype\030\002 \003(\005\022\032\n\022Attributetypevalue\030"
+  "\003 \003(\005\"\300\001\n\027ClientDataChangeMessage\022\021\n\tElt"
+  "emtype\030\001 \002(\005\022\r\n\005Value\030\002 \002(\005\022\013\n\003Uid\030\003 \002(\005"
+  "\022\n\n\002Id\030\004 \002(\005\022\020\n\010Usemoney\030\005 \001(\010\022\013\n\003Pos\030\006 "
+  "\001(\005\022\r\n\005Inuse\030\007 \001(\010\022\020\n\010Dropfrom\030\010 \001(\010\022\030\n\004"
+  "Mode\030\t \003(\0132\n.Modelinfo\022\020\n\010Password\030\n \002(\t"
+  "\"\243\001\n\021ClientMoveMessage\022\013\n\003Uid\030\001 \002(\005\022\014\n\004P"
+  "osx\030\002 \002(\005\022\014\n\004Posy\030\003 \002(\005\022\014\n\004Posz\030\004 \002(\005\022\014\n"
+  "\004Tarx\030\005 \002(\005\022\014\n\004Tary\030\006 \002(\005\022\014\n\004Tarz\030\007 \002(\005\022"
+  "\r\n\005Speed\030\010 \002(\005\022\014\n\004Time\030\t \002(\003\022\020\n\010Password"
+  "\030\n \002(\t\"3\n\022ClientCheckMessage\022\013\n\003Uid\030\001 \002("
+  "\005\022\020\n\010Password\030\002 \002(\t\"T\n\020Attributeitempro\022"
+  "\n\n\002Id\030\001 \002(\005\022\016\n\006Amount\030\002 \001(\005\022\021\n\tEltemtype"
+  "\030\003 \001(\005\022\021\n\tattribute\030\004 \003(\005\"0\n\nPackagepro\022"
+  "\"\n\007Itempro\030\001 \003(\0132\021.Attributeitempro\"x\n\rS"
+  "qlplayerinfo\022\n\n\002Hp\030\001 \002(\005\022\016\n\006Attack\030\002 \002(\005"
+  "\022\013\n\003Uid\030\003 \002(\005\022 \n\005Inuse\030\004 \003(\0132\021.Attribute"
+  "itempro\022\034\n\007Package\030\005 \001(\0132\013.Packagepro"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_Demo_2eproto_deps[1] = {
 };
@@ -564,7 +571,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Dem
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_Demo_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_Demo_2eproto = {
-  false, false, descriptor_table_protodef_Demo_2eproto, "Demo.proto", 1263,
+  false, false, descriptor_table_protodef_Demo_2eproto, "Demo.proto", 1317,
   &descriptor_table_Demo_2eproto_once, descriptor_table_Demo_2eproto_sccs, descriptor_table_Demo_2eproto_deps, 15, 0,
   schemas, file_default_instances, TableStruct_Demo_2eproto::offsets,
   file_level_metadata_Demo_2eproto, 15, file_level_enum_descriptors_Demo_2eproto, file_level_service_descriptors_Demo_2eproto,
@@ -2853,13 +2860,16 @@ class ClientDataQueryMessage::_Internal {
  public:
   using HasBits = decltype(std::declval<ClientDataQueryMessage>()._has_bits_);
   static void set_has_uid(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-  static void set_has_init(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
+  static void set_has_init(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
+  static void set_has_password(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
   static bool MissingRequiredFields(const HasBits& has_bits) {
-    return ((has_bits[0] & 0x00000003) ^ 0x00000003) != 0;
+    return ((has_bits[0] & 0x00000007) ^ 0x00000007) != 0;
   }
 };
 
@@ -2873,6 +2883,11 @@ ClientDataQueryMessage::ClientDataQueryMessage(const ClientDataQueryMessage& fro
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (from._internal_has_password()) {
+    password_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_password(), 
+      GetArena());
+  }
   ::memcpy(&uid_, &from.uid_,
     static_cast<size_t>(reinterpret_cast<char*>(&init_) -
     reinterpret_cast<char*>(&uid_)) + sizeof(init_));
@@ -2880,6 +2895,8 @@ ClientDataQueryMessage::ClientDataQueryMessage(const ClientDataQueryMessage& fro
 }
 
 void ClientDataQueryMessage::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_ClientDataQueryMessage_Demo_2eproto.base);
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
       reinterpret_cast<char*>(&uid_) - reinterpret_cast<char*>(this)),
       0, static_cast<size_t>(reinterpret_cast<char*>(&init_) -
@@ -2894,6 +2911,7 @@ ClientDataQueryMessage::~ClientDataQueryMessage() {
 
 void ClientDataQueryMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void ClientDataQueryMessage::ArenaDtor(void* object) {
@@ -2918,7 +2936,10 @@ void ClientDataQueryMessage::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000001u) {
+    password_.ClearNonDefaultToEmpty();
+  }
+  if (cached_has_bits & 0x00000006u) {
     ::memset(&uid_, 0, static_cast<size_t>(
         reinterpret_cast<char*>(&init_) -
         reinterpret_cast<char*>(&uid_)) + sizeof(init_));
@@ -2948,6 +2969,17 @@ const char* ClientDataQueryMessage::_InternalParse(const char* ptr, ::PROTOBUF_N
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           _Internal::set_has_init(&has_bits);
           init_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // required string Password = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ClientDataQueryMessage.Password");
+          #endif  // !NDEBUG
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -2982,15 +3014,25 @@ failure:
 
   cached_has_bits = _has_bits_[0];
   // required int32 Uid = 1;
-  if (cached_has_bits & 0x00000001u) {
+  if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_uid(), target);
   }
 
   // required int32 Init = 2;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_init(), target);
+  }
+
+  // required string Password = 3;
+  if (cached_has_bits & 0x00000001u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "ClientDataQueryMessage.Password");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_password(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3004,6 +3046,13 @@ failure:
 size_t ClientDataQueryMessage::RequiredFieldsByteSizeFallback() const {
 // @@protoc_insertion_point(required_fields_byte_size_fallback_start:ClientDataQueryMessage)
   size_t total_size = 0;
+
+  if (_internal_has_password()) {
+    // required string Password = 3;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+  }
 
   if (_internal_has_uid()) {
     // required int32 Uid = 1;
@@ -3025,7 +3074,12 @@ size_t ClientDataQueryMessage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:ClientDataQueryMessage)
   size_t total_size = 0;
 
-  if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
+  if (((_has_bits_[0] & 0x00000007) ^ 0x00000007) == 0) {  // All required fields are present.
+    // required string Password = 3;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+
     // required int32 Uid = 1;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -3075,11 +3129,14 @@ void ClientDataQueryMessage::MergeFrom(const ClientDataQueryMessage& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
-      uid_ = from.uid_;
+      _internal_set_password(from._internal_password());
     }
     if (cached_has_bits & 0x00000002u) {
+      uid_ = from.uid_;
+    }
+    if (cached_has_bits & 0x00000004u) {
       init_ = from.init_;
     }
     _has_bits_[0] |= cached_has_bits;
@@ -3109,6 +3166,7 @@ void ClientDataQueryMessage::InternalSwap(ClientDataQueryMessage* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ClientDataQueryMessage, init_)
       + sizeof(ClientDataQueryMessage::init_)
@@ -3406,31 +3464,34 @@ class ClientDataChangeMessage::_Internal {
  public:
   using HasBits = decltype(std::declval<ClientDataChangeMessage>()._has_bits_);
   static void set_has_eltemtype(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-  static void set_has_value(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
-  static void set_has_uid(HasBits* has_bits) {
+  static void set_has_value(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
   }
-  static void set_has_id(HasBits* has_bits) {
+  static void set_has_uid(HasBits* has_bits) {
     (*has_bits)[0] |= 8u;
   }
-  static void set_has_usemoney(HasBits* has_bits) {
-    (*has_bits)[0] |= 32u;
-  }
-  static void set_has_pos(HasBits* has_bits) {
+  static void set_has_id(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
-  static void set_has_inuse(HasBits* has_bits) {
+  static void set_has_usemoney(HasBits* has_bits) {
     (*has_bits)[0] |= 64u;
   }
-  static void set_has_dropfrom(HasBits* has_bits) {
+  static void set_has_pos(HasBits* has_bits) {
+    (*has_bits)[0] |= 32u;
+  }
+  static void set_has_inuse(HasBits* has_bits) {
     (*has_bits)[0] |= 128u;
   }
+  static void set_has_dropfrom(HasBits* has_bits) {
+    (*has_bits)[0] |= 256u;
+  }
+  static void set_has_password(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
   static bool MissingRequiredFields(const HasBits& has_bits) {
-    return ((has_bits[0] & 0x0000000f) ^ 0x0000000f) != 0;
+    return ((has_bits[0] & 0x0000001f) ^ 0x0000001f) != 0;
   }
 };
 
@@ -3446,6 +3507,11 @@ ClientDataChangeMessage::ClientDataChangeMessage(const ClientDataChangeMessage& 
       _has_bits_(from._has_bits_),
       mode_(from.mode_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (from._internal_has_password()) {
+    password_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_password(), 
+      GetArena());
+  }
   ::memcpy(&eltemtype_, &from.eltemtype_,
     static_cast<size_t>(reinterpret_cast<char*>(&dropfrom_) -
     reinterpret_cast<char*>(&eltemtype_)) + sizeof(dropfrom_));
@@ -3454,6 +3520,7 @@ ClientDataChangeMessage::ClientDataChangeMessage(const ClientDataChangeMessage& 
 
 void ClientDataChangeMessage::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_ClientDataChangeMessage_Demo_2eproto.base);
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
       reinterpret_cast<char*>(&eltemtype_) - reinterpret_cast<char*>(this)),
       0, static_cast<size_t>(reinterpret_cast<char*>(&dropfrom_) -
@@ -3468,6 +3535,7 @@ ClientDataChangeMessage::~ClientDataChangeMessage() {
 
 void ClientDataChangeMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void ClientDataChangeMessage::ArenaDtor(void* object) {
@@ -3493,11 +3561,15 @@ void ClientDataChangeMessage::Clear() {
 
   mode_.Clear();
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x000000ffu) {
-    ::memset(&eltemtype_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&dropfrom_) -
-        reinterpret_cast<char*>(&eltemtype_)) + sizeof(dropfrom_));
+  if (cached_has_bits & 0x00000001u) {
+    password_.ClearNonDefaultToEmpty();
   }
+  if (cached_has_bits & 0x000000feu) {
+    ::memset(&eltemtype_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&inuse_) -
+        reinterpret_cast<char*>(&eltemtype_)) + sizeof(inuse_));
+  }
+  dropfrom_ = false;
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -3586,6 +3658,17 @@ const char* ClientDataChangeMessage::_InternalParse(const char* ptr, ::PROTOBUF_
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<74>(ptr));
         } else goto handle_unusual;
         continue;
+      // required string Password = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ClientDataChangeMessage.Password");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag & 7) == 4 || tag == 0) {
@@ -3617,49 +3700,49 @@ failure:
 
   cached_has_bits = _has_bits_[0];
   // required int32 Eltemtype = 1;
-  if (cached_has_bits & 0x00000001u) {
+  if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_eltemtype(), target);
   }
 
   // required int32 Value = 2;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_value(), target);
   }
 
   // required int32 Uid = 3;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_uid(), target);
   }
 
   // required int32 Id = 4;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_id(), target);
   }
 
   // optional bool Usemoney = 5;
-  if (cached_has_bits & 0x00000020u) {
+  if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_usemoney(), target);
   }
 
   // optional int32 Pos = 6;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(6, this->_internal_pos(), target);
   }
 
   // optional bool Inuse = 7;
-  if (cached_has_bits & 0x00000040u) {
+  if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(7, this->_internal_inuse(), target);
   }
 
   // optional bool Dropfrom = 8;
-  if (cached_has_bits & 0x00000080u) {
+  if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(8, this->_internal_dropfrom(), target);
   }
@@ -3670,6 +3753,16 @@ failure:
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(9, this->_internal_mode(i), target, stream);
+  }
+
+  // required string Password = 10;
+  if (cached_has_bits & 0x00000001u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "ClientDataChangeMessage.Password");
+    target = stream->WriteStringMaybeAliased(
+        10, this->_internal_password(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3683,6 +3776,13 @@ failure:
 size_t ClientDataChangeMessage::RequiredFieldsByteSizeFallback() const {
 // @@protoc_insertion_point(required_fields_byte_size_fallback_start:ClientDataChangeMessage)
   size_t total_size = 0;
+
+  if (_internal_has_password()) {
+    // required string Password = 10;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+  }
 
   if (_internal_has_eltemtype()) {
     // required int32 Eltemtype = 1;
@@ -3718,7 +3818,12 @@ size_t ClientDataChangeMessage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:ClientDataChangeMessage)
   size_t total_size = 0;
 
-  if (((_has_bits_[0] & 0x0000000f) ^ 0x0000000f) == 0) {  // All required fields are present.
+  if (((_has_bits_[0] & 0x0000001f) ^ 0x0000001f) == 0) {  // All required fields are present.
+    // required string Password = 10;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+
     // required int32 Eltemtype = 1;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -3754,30 +3859,30 @@ size_t ClientDataChangeMessage::ByteSizeLong() const {
   }
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x000000f0u) {
+  if (cached_has_bits & 0x000000e0u) {
     // optional int32 Pos = 6;
-    if (cached_has_bits & 0x00000010u) {
+    if (cached_has_bits & 0x00000020u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
           this->_internal_pos());
     }
 
     // optional bool Usemoney = 5;
-    if (cached_has_bits & 0x00000020u) {
-      total_size += 1 + 1;
-    }
-
-    // optional bool Inuse = 7;
     if (cached_has_bits & 0x00000040u) {
       total_size += 1 + 1;
     }
 
-    // optional bool Dropfrom = 8;
+    // optional bool Inuse = 7;
     if (cached_has_bits & 0x00000080u) {
       total_size += 1 + 1;
     }
 
   }
+  // optional bool Dropfrom = 8;
+  if (cached_has_bits & 0x00000100u) {
+    total_size += 1 + 1;
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
         _internal_metadata_, total_size, &_cached_size_);
@@ -3813,30 +3918,33 @@ void ClientDataChangeMessage::MergeFrom(const ClientDataChangeMessage& from) {
   cached_has_bits = from._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
-      eltemtype_ = from.eltemtype_;
+      _internal_set_password(from._internal_password());
     }
     if (cached_has_bits & 0x00000002u) {
-      value_ = from.value_;
+      eltemtype_ = from.eltemtype_;
     }
     if (cached_has_bits & 0x00000004u) {
-      uid_ = from.uid_;
+      value_ = from.value_;
     }
     if (cached_has_bits & 0x00000008u) {
-      id_ = from.id_;
+      uid_ = from.uid_;
     }
     if (cached_has_bits & 0x00000010u) {
-      pos_ = from.pos_;
+      id_ = from.id_;
     }
     if (cached_has_bits & 0x00000020u) {
-      usemoney_ = from.usemoney_;
+      pos_ = from.pos_;
     }
     if (cached_has_bits & 0x00000040u) {
-      inuse_ = from.inuse_;
+      usemoney_ = from.usemoney_;
     }
     if (cached_has_bits & 0x00000080u) {
-      dropfrom_ = from.dropfrom_;
+      inuse_ = from.inuse_;
     }
     _has_bits_[0] |= cached_has_bits;
+  }
+  if (cached_has_bits & 0x00000100u) {
+    _internal_set_dropfrom(from._internal_dropfrom());
   }
 }
 
@@ -3865,6 +3973,7 @@ void ClientDataChangeMessage::InternalSwap(ClientDataChangeMessage* other) {
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
   mode_.InternalSwap(&other->mode_);
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ClientDataChangeMessage, dropfrom_)
       + sizeof(ClientDataChangeMessage::dropfrom_)
@@ -3884,34 +3993,37 @@ class ClientMoveMessage::_Internal {
  public:
   using HasBits = decltype(std::declval<ClientMoveMessage>()._has_bits_);
   static void set_has_uid(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-  static void set_has_posx(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
-  static void set_has_posy(HasBits* has_bits) {
+  static void set_has_posx(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
   }
-  static void set_has_posz(HasBits* has_bits) {
+  static void set_has_posy(HasBits* has_bits) {
     (*has_bits)[0] |= 8u;
   }
-  static void set_has_tarx(HasBits* has_bits) {
+  static void set_has_posz(HasBits* has_bits) {
     (*has_bits)[0] |= 16u;
   }
-  static void set_has_tary(HasBits* has_bits) {
+  static void set_has_tarx(HasBits* has_bits) {
     (*has_bits)[0] |= 32u;
   }
-  static void set_has_tarz(HasBits* has_bits) {
+  static void set_has_tary(HasBits* has_bits) {
     (*has_bits)[0] |= 64u;
   }
-  static void set_has_speed(HasBits* has_bits) {
+  static void set_has_tarz(HasBits* has_bits) {
     (*has_bits)[0] |= 128u;
   }
-  static void set_has_time(HasBits* has_bits) {
+  static void set_has_speed(HasBits* has_bits) {
     (*has_bits)[0] |= 256u;
   }
+  static void set_has_time(HasBits* has_bits) {
+    (*has_bits)[0] |= 512u;
+  }
+  static void set_has_password(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
   static bool MissingRequiredFields(const HasBits& has_bits) {
-    return ((has_bits[0] & 0x000001ff) ^ 0x000001ff) != 0;
+    return ((has_bits[0] & 0x000003ff) ^ 0x000003ff) != 0;
   }
 };
 
@@ -3925,6 +4037,11 @@ ClientMoveMessage::ClientMoveMessage(const ClientMoveMessage& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (from._internal_has_password()) {
+    password_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_password(), 
+      GetArena());
+  }
   ::memcpy(&uid_, &from.uid_,
     static_cast<size_t>(reinterpret_cast<char*>(&time_) -
     reinterpret_cast<char*>(&uid_)) + sizeof(time_));
@@ -3932,6 +4049,8 @@ ClientMoveMessage::ClientMoveMessage(const ClientMoveMessage& from)
 }
 
 void ClientMoveMessage::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_ClientMoveMessage_Demo_2eproto.base);
+  password_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
       reinterpret_cast<char*>(&uid_) - reinterpret_cast<char*>(this)),
       0, static_cast<size_t>(reinterpret_cast<char*>(&time_) -
@@ -3946,6 +4065,7 @@ ClientMoveMessage::~ClientMoveMessage() {
 
 void ClientMoveMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
+  password_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void ClientMoveMessage::ArenaDtor(void* object) {
@@ -3970,12 +4090,19 @@ void ClientMoveMessage::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x000000ffu) {
-    ::memset(&uid_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&speed_) -
-        reinterpret_cast<char*>(&uid_)) + sizeof(speed_));
+  if (cached_has_bits & 0x00000001u) {
+    password_.ClearNonDefaultToEmpty();
   }
-  time_ = PROTOBUF_LONGLONG(0);
+  if (cached_has_bits & 0x000000feu) {
+    ::memset(&uid_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&tarz_) -
+        reinterpret_cast<char*>(&uid_)) + sizeof(tarz_));
+  }
+  if (cached_has_bits & 0x00000300u) {
+    ::memset(&speed_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&time_) -
+        reinterpret_cast<char*>(&speed_)) + sizeof(time_));
+  }
   _has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -4060,6 +4187,17 @@ const char* ClientMoveMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
+      // required string Password = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 82)) {
+          auto str = _internal_mutable_password();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          #ifndef NDEBUG
+          ::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "ClientMoveMessage.Password");
+          #endif  // !NDEBUG
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
       default: {
       handle_unusual:
         if ((tag & 7) == 4 || tag == 0) {
@@ -4091,57 +4229,67 @@ failure:
 
   cached_has_bits = _has_bits_[0];
   // required int32 Uid = 1;
-  if (cached_has_bits & 0x00000001u) {
+  if (cached_has_bits & 0x00000002u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_uid(), target);
   }
 
   // required int32 Posx = 2;
-  if (cached_has_bits & 0x00000002u) {
+  if (cached_has_bits & 0x00000004u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_posx(), target);
   }
 
   // required int32 Posy = 3;
-  if (cached_has_bits & 0x00000004u) {
+  if (cached_has_bits & 0x00000008u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_posy(), target);
   }
 
   // required int32 Posz = 4;
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(4, this->_internal_posz(), target);
   }
 
   // required int32 Tarx = 5;
-  if (cached_has_bits & 0x00000010u) {
+  if (cached_has_bits & 0x00000020u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_tarx(), target);
   }
 
   // required int32 Tary = 6;
-  if (cached_has_bits & 0x00000020u) {
+  if (cached_has_bits & 0x00000040u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(6, this->_internal_tary(), target);
   }
 
   // required int32 Tarz = 7;
-  if (cached_has_bits & 0x00000040u) {
+  if (cached_has_bits & 0x00000080u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_tarz(), target);
   }
 
   // required int32 Speed = 8;
-  if (cached_has_bits & 0x00000080u) {
+  if (cached_has_bits & 0x00000100u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(8, this->_internal_speed(), target);
   }
 
   // required int64 Time = 9;
-  if (cached_has_bits & 0x00000100u) {
+  if (cached_has_bits & 0x00000200u) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt64ToArray(9, this->_internal_time(), target);
+  }
+
+  // required string Password = 10;
+  if (cached_has_bits & 0x00000001u) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SERIALIZE,
+      "ClientMoveMessage.Password");
+    target = stream->WriteStringMaybeAliased(
+        10, this->_internal_password(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -4155,6 +4303,13 @@ failure:
 size_t ClientMoveMessage::RequiredFieldsByteSizeFallback() const {
 // @@protoc_insertion_point(required_fields_byte_size_fallback_start:ClientMoveMessage)
   size_t total_size = 0;
+
+  if (_internal_has_password()) {
+    // required string Password = 10;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+  }
 
   if (_internal_has_uid()) {
     // required int32 Uid = 1;
@@ -4225,7 +4380,12 @@ size_t ClientMoveMessage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:ClientMoveMessage)
   size_t total_size = 0;
 
-  if (((_has_bits_[0] & 0x000001ff) ^ 0x000001ff) == 0) {  // All required fields are present.
+  if (((_has_bits_[0] & 0x000003ff) ^ 0x000003ff) == 0) {  // All required fields are present.
+    // required string Password = 10;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_password());
+
     // required int32 Uid = 1;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -4312,33 +4472,39 @@ void ClientMoveMessage::MergeFrom(const ClientMoveMessage& from) {
   cached_has_bits = from._has_bits_[0];
   if (cached_has_bits & 0x000000ffu) {
     if (cached_has_bits & 0x00000001u) {
-      uid_ = from.uid_;
+      _internal_set_password(from._internal_password());
     }
     if (cached_has_bits & 0x00000002u) {
-      posx_ = from.posx_;
+      uid_ = from.uid_;
     }
     if (cached_has_bits & 0x00000004u) {
-      posy_ = from.posy_;
+      posx_ = from.posx_;
     }
     if (cached_has_bits & 0x00000008u) {
-      posz_ = from.posz_;
+      posy_ = from.posy_;
     }
     if (cached_has_bits & 0x00000010u) {
-      tarx_ = from.tarx_;
+      posz_ = from.posz_;
     }
     if (cached_has_bits & 0x00000020u) {
-      tary_ = from.tary_;
+      tarx_ = from.tarx_;
     }
     if (cached_has_bits & 0x00000040u) {
-      tarz_ = from.tarz_;
+      tary_ = from.tary_;
     }
     if (cached_has_bits & 0x00000080u) {
-      speed_ = from.speed_;
+      tarz_ = from.tarz_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
-  if (cached_has_bits & 0x00000100u) {
-    _internal_set_time(from._internal_time());
+  if (cached_has_bits & 0x00000300u) {
+    if (cached_has_bits & 0x00000100u) {
+      speed_ = from.speed_;
+    }
+    if (cached_has_bits & 0x00000200u) {
+      time_ = from.time_;
+    }
+    _has_bits_[0] |= cached_has_bits;
   }
 }
 
@@ -4365,6 +4531,7 @@ void ClientMoveMessage::InternalSwap(ClientMoveMessage* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   swap(_has_bits_[0], other->_has_bits_[0]);
+  password_.Swap(&other->password_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ClientMoveMessage, time_)
       + sizeof(ClientMoveMessage::time_)

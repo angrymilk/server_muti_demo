@@ -21,6 +21,14 @@ TCPSocket::TCPSocket(int fd, BaseServer *server, ReadFunctor rf, int type)
     m_type = type;
 }
 
+TCPSocket::TCPSocket(BaseServer *server, ReadFunctor rf, int type)
+{
+    m_buffer = make_shared<Buffer>();
+    m_server = server;
+    m_read_callback = rf;
+    m_type = type;
+}
+
 TCPSocket::~TCPSocket()
 {
 }
@@ -318,7 +326,7 @@ int TCPSocket::process_data()
     int ret = recv_data();
     if (ret < 0)
     {
-        if (ret == -3 || ret == -6)
+        if (ret == -3)
             printf("[Common][TCPSocket.cpp:%d][WARNING]:recv_data failed fd:%d errorcode:%d\n", __LINE__, m_fd, ret);
         else
         {

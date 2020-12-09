@@ -10,7 +10,7 @@ SQLServer::SQLServer()
         fprintf(stderr, "%s\n", mysql_error(con));
     }
 
-    if (!mysql_real_connect(con, "localhost", "root", "12345678", "PlayerInfo", 0, NULL, 0))
+    if (!mysql_real_connect(con, "localhost", "root", "123456", "PlayerInfo", 0, NULL, 0))
     {
         fprintf(stderr, "%s\n", mysql_error(con));
         mysql_close(con);

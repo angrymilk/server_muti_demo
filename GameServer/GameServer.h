@@ -41,7 +41,7 @@ public:
     void parse(char *input, Player &player, int &size);
     void handle_move(Player &player);
     void make_fd(int uid, int fd);
-    void serialize(char *data, Player &temp);
+    void serialize(char *data, Player &temp, int &size);
     ThreadTask m_thread_task;
 
 private:

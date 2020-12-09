@@ -16,6 +16,7 @@ public:
     typedef std::function<int(TCPSocket &)> ReadFunctor;
     TCPSocket(BaseServer *server, int type);
     TCPSocket(int fd, BaseServer *server, ReadFunctor rf, int type);
+    TCPSocket(BaseServer *server, ReadFunctor rf,int type);
     ~TCPSocket();
 
 private:

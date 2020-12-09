@@ -107,7 +107,7 @@ int BaseServer::add_client_socket(int client_port, std::string client_ip, int se
 {
     int ret = 0;
 
-    std::shared_ptr<TCPSocket> conn_socket = make_shared<TCPSocket>(this, 2);
+    std::shared_ptr<TCPSocket> conn_socket = make_shared<TCPSocket>(this, m_read_func, 2);
     ret = conn_socket->open_as_client(const_cast<char *>(client_ip.c_str()), client_port, 10024);
     int tmpIp;
     ret = ip_string_to_addr(const_cast<char *>(server_ip.c_str()), tmpIp);
@@ -144,7 +144,6 @@ int BaseServer::epoll_recv()
         struct epoll_event *pstEvent = m_epoll.get_event(i);
         int socketfd = pstEvent->data.fd;
         std::shared_ptr<TCPSocket> pstSocket = m_sockets_map[socketfd];
-        printf("------------------------------    %d\n", socketfd);
         if (pstSocket == NULL || pstSocket->get_fd() < 0)
         {
             printf("[Common][BaseServer.cpp:%d][ERROR]:get_server_tcpsocket failed fd:%d\n", __LINE__, socketfd);
@@ -183,7 +182,7 @@ int BaseServer::epoll_recv()
             }
             else if (ret)
             {
-                printf("[Common][BaseServer.cpp:%d][ERROR]:socket process_data failed fd:%d\n", __LINE__, pstSocket->get_fd());
+                printf("[Common][BaseServer.cpp:%d][ERROR]:socket process_data failed fd:%d return_val=%d\n", __LINE__, pstSocket->get_fd(), ret);
                 return ret;
             }
         }
