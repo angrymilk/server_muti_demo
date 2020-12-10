@@ -276,7 +276,7 @@ int TCPSocket::connect_to(u_long ip, uint16_t port, bool nonblock, int msecond)
     {
         close_socket();
         printf("[Common][TCPSocket.cpp:%d][ERROR]:Client Connect Error Here !\n", __LINE__);
-        return -1;
+        return -505;
     }
     if (nonblock)
     {

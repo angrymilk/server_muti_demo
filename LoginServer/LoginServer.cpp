@@ -13,7 +13,13 @@ LoginServer::LoginServer()
     server_config gate_conf;
     load_config("gate_server", gate_conf);
     m_con[0] = m_server->add_client_socket(server_conf.port, server_conf.ip, gate_conf.port, gate_conf.ip);
-    m_gateserver_num = 1;
+    if (m_con[0] < 0)
+    {
+    }
+    else
+    {
+        m_gateserver_num = 1;
+    }
 }
 
 int LoginServer::run()
@@ -97,12 +103,10 @@ void LoginServer::register_(TCPSocket &con, std::string &data, int datasize)
 
 void LoginServer::send_client(char *data, int size, int uid)
 {
-    printf("--------------------------   %d  %d\n", m_fd_map[uid], size);
     m_server->m_sockets_map[m_fd_map[uid]]->send_data(data, size);
 }
 
 void LoginServer::send_gate(char *data, int size, int uid)
 {
-    printf("--------------------------   %d  %d\n", m_con[m_con_map[uid]], size);
     m_server->m_sockets_map[m_con[m_con_map[uid]]]->send_data(data, size);
 }
