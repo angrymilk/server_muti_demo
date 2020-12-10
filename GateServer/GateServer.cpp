@@ -1,12 +1,19 @@
 #include "GateServer.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "../ThirdPart/loadconfig.h"
 GateServer::GateServer()
 {
-    m_server.reset(new BaseServer("127.0.0.1", 3000));
+    server_config gate_conf;
+    load_config("gate_server", gate_conf);
+
+    m_server.reset(new BaseServer(gate_conf.ip, gate_conf.port));
     m_server->set_read_callback(std::bind(&GateServer::on_message, this, std::placeholders::_1));
     m_con.resize(1);
-    m_con[0] = m_server->add_client_socket(3000, "127.0.0.1", 3001, "127.0.0.1");
+
+    server_config game_conf;
+    load_config("game_server", game_conf);
+    m_con[0] = m_server->add_client_socket(gate_conf.port, gate_conf.ip, game_conf.port, game_conf.ip);
 }
 
 int GateServer::run()

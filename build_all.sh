@@ -1,5 +1,8 @@
 pwd=`pwd`
-rm game_server db_Server login_server gate_server
+rm game_server db_server login_server gate_server
+
+cd ${pwd}/ThirdPart
+make clean && make -j8
 
 cd ${pwd}/ProtoSrc
 sh build.sh

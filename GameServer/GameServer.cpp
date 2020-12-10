@@ -2,9 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "../ThirdPart/loadconfig.h"
 GameServer::GameServer()
 {
-    m_server.reset(new BaseServer("127.0.0.1", 3001));
+    server_config game_conf;
+    load_config("game_server", game_conf);
+    m_server.reset(new BaseServer(game_conf.ip, game_conf.port));
     m_server->set_read_callback(std::bind(&GameServer::on_message, this, std::placeholders::_1));
     m_thread_task.Start();
 }

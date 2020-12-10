@@ -1,13 +1,20 @@
 #include "DBServer.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "../ThirdPart/loadconfig.h"
 DBServer::DBServer()
 {
+    server_config db_conf;
+    load_config("db_server", db_conf);
+
     m_sql_server.reset(new SQLServer);
-    m_server.reset(new BaseServer("127.0.0.1", 3002));
+    m_server.reset(new BaseServer(db_conf.ip, db_conf.port));
     m_server->set_read_callback(std::bind(&DBServer::on_message, this, std::placeholders::_1));
     m_con.resize(1);
-    m_con[0] = m_server->add_client_socket(3002, "127.0.0.1", 3001, "127.0.0.1");
+
+    server_config game_conf;
+    load_config("game_server", game_conf);
+    m_con[0] = m_server->add_client_socket(db_conf.port, db_conf.ip, game_conf.port, game_conf.ip);
 }
 
 int DBServer::run()

@@ -1,0 +1,26 @@
+<server_config>
+
+
+    <login_server id = "1">
+        <ip>127.0.0.1</ip>
+        <port>3001</port>
+    </login_server>
+
+    <gate_server id = "2">
+        <ip>127.0.0.1</ip> 
+        <port>3002</port>
+    </gate_server>
+
+
+    <game_server id = "3">
+        <ip>127.0.0.1</ip>
+        <port>3003</port>
+    </game_server>
+
+
+    <db_server id = "4">
+        <ip>127.0.0.1</ip>
+        <port>3004</port>
+    </db_server>
+
+</server_config>

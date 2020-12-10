@@ -4,10 +4,15 @@
 LoginServer::LoginServer()
 {
     m_sql_server.reset(new SQLServer);
-    m_server.reset(new BaseServer("127.0.0.1", 10022));
+    server_config server_conf;
+    load_config("login_server", server_conf);
+
+    m_server.reset(new BaseServer(server_conf.ip, server_conf.port));
     m_server->set_read_callback(std::bind(&LoginServer::on_message, this, std::placeholders::_1));
     m_con.resize(1);
-    m_con[0] = m_server->add_client_socket(10022, "127.0.0.1", 3000, "127.0.0.1");
+    server_config gate_conf;
+    load_config("gate_server", gate_conf);
+    m_con[0] = m_server->add_client_socket(server_conf.port, server_conf.ip, gate_conf.port, gate_conf.ip);
     m_gateserver_num = 1;
 }
 

@@ -7,6 +7,7 @@
 #include "../Common/ThreadTask.h"
 #include "../Common/RedisServer.h"
 #include "../Common/SQLServer.h"
+#include "../ThirdPart/loadconfig.h"
 class LoginServer
 {
 public:

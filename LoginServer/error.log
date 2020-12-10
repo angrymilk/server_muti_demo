@@ -1,0 +1,111 @@
+g++ -fPIC -O2 -L/usr/include/mysql -Wall -std=c++11 -Wno-deprecated -Wno-unused-parameter -L/usr/lib64/ -g -Wno-unused-variable -Wno-unused-function -L/usr/lib64/ `pkg-config --cflags --libs protobuf`  -Lpthread -std=c++11 -I../Common -I../Package -I../ThirdPart -c LoginServer.cpp -o .objs/LoginServer.o
+Package protobuf was not found in the pkg-config search path.
+Perhaps you should add the directory containing `protobuf.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'protobuf' found
+LoginServer.cpp: In member function ‘void LoginServer::register_(TCPSocket&, std::string&, int)’:
+LoginServer.cpp:79:60: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     head.m_message_len = (MESSAGE_HEAD_SIZE + res.ByteSize()) | (1 << 20);
+                                                            ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from LoginServer.h:4,
+                 from LoginServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+LoginServer.cpp:80:49: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     int temp = MESSAGE_HEAD_SIZE + res.ByteSize();
+                                                 ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from LoginServer.h:4,
+                 from LoginServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+LoginServer.cpp:83:73: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
+                                                                         ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from LoginServer.h:4,
+                 from LoginServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+LoginServer.cpp:90:66: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     head_.m_message_len = (MESSAGE_HEAD_SIZE + res_gate.ByteSize()) | (1 << 21);
+                                                                  ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from LoginServer.h:4,
+                 from LoginServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+LoginServer.cpp:91:55: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     int temp_ = MESSAGE_HEAD_SIZE + res_gate.ByteSize();
+                                                       ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from LoginServer.h:4,
+                 from LoginServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+LoginServer.cpp:94:90: warning: ‘int google::protobuf::MessageLite::ByteSize() const’ is deprecated: Please use ByteSizeLong() instead [-Wdeprecated-declarations]
+     res_gate.SerializePartialToArray(data_ + temp + MESSAGE_HEAD_SIZE, res_gate.ByteSize());
+                                                                                          ^
+In file included from /usr/local/include/google/protobuf/generated_enum_util.h:36:0,
+                 from /usr/local/include/google/protobuf/map.h:55,
+                 from /usr/local/include/google/protobuf/generated_message_table_driven.h:34,
+                 from ../Common/../Proto/Demo.pb.h:26,
+                 from ../Common/base.h:34,
+                 from ../Common/TCPSocket.h:5,
+                 from ../Common/BaseServer.h:5,
+                 from LoginServer.h:4,
+                 from LoginServer.cpp:1:
+/usr/local/include/google/protobuf/message_lite.h:438:7: note: declared here
+   int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+       ^~~~~~~~
+g++ -fPIC -O2 -L/usr/include/mysql -Wall -std=c++11 -Wno-deprecated -Wno-unused-parameter -L/usr/lib64/ -g -Wno-unused-variable -Wno-unused-function -L/usr/lib64/ `pkg-config --cflags --libs protobuf`  -Lpthread -std=c++11 -I../Common -I../Package -I../ThirdPart -c main.cpp -o .objs/main.o
+Package protobuf was not found in the pkg-config search path.
+Perhaps you should add the directory containing `protobuf.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'protobuf' found
+g++ -o /root/test/muti_server/muti/server_muti_demo/LoginServer/../Bin/login_server ./.objs/LoginServer.o ./.objs/main.o -L/usr/local/lib/ -L../Common/Libs -L../Package/Libs -L../ThirdPart/Libs -L/usr/lib64/mysql/ -g -lcommon -lmysqlclient -lhiredis -lpackage -lproto_out  -lprotobuf `pkg-config --cflags --libs protobuf` -lpthread -g
+Package protobuf was not found in the pkg-config search path.
+Perhaps you should add the directory containing `protobuf.pc'
+to the PKG_CONFIG_PATH environment variable
+No package 'protobuf' found
+./.objs/LoginServer.o: In function `LoginServer::LoginServer()':
+/root/test/muti_server/muti/server_muti_demo/LoginServer/LoginServer.cpp:8: undefined reference to `load_config(char const*, server_config&)'
+/root/test/muti_server/muti/server_muti_demo/LoginServer/LoginServer.cpp:14: undefined reference to `load_config(char const*, server_config&)'
+collect2: error: ld returned 1 exit status
+make: *** [Makefile:49: /root/test/muti_server/muti/server_muti_demo/LoginServer/../Bin/login_server] Error 1
