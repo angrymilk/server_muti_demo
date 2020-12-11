@@ -21,13 +21,6 @@ int GameServer::run()
 
 int GameServer::on_message(TCPSocket &con)
 {
-    //将函数扔入计算线程中
-    m_thread_task.submit(std::bind(&GameServer::get_one_code, this, con));
-    return 0;
-}
-
-void GameServer::get_one_code(TCPSocket &con)
-{
     int ret = 0;
     while (1)
     {
@@ -37,26 +30,7 @@ void GameServer::get_one_code(TCPSocket &con)
         ret = con.m_buffer->get_one_code(const_cast<char *>(m_sRvMsgBuf.c_str()), data_size);
         if (ret > 0)
         {
-            if (((data_size & BIT_COUNT) >> 20) == 4)
-            {
-                printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Change Function\n", __LINE__);
-                solve_add(con, m_sRvMsgBuf, data_size);
-            }
-            else if (((data_size & BIT_COUNT) >> 20) == 3)
-            {
-                printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Function\n", __LINE__);
-                solve_query(con, m_sRvMsgBuf, data_size);
-            }
-            else if (((data_size & BIT_COUNT) >> 20) == 5)
-            {
-                printf("[GameServer][GameServer.cpp:%d][INFO]: In Move Function\n", __LINE__);
-                move_calculate(con, m_sRvMsgBuf, data_size);
-            }
-            else if (((data_size & BIT_COUNT) >> 20) == 7)
-            {
-                printf("[GameServer][GameServer.cpp:%d][INFO]: In Move Function\n", __LINE__);
-                transmit_db(con, m_sRvMsgBuf, data_size);
-            }
+            m_thread_task.submit(std::bind(&GameServer::run_function, this, con, m_sRvMsgBuf, data_size));
             continue;
         }
         else if (ret < 0)
@@ -64,6 +38,31 @@ void GameServer::get_one_code(TCPSocket &con)
             printf("[GameServer][GameServer.cpp:%d][ERROR]:get_one_code failed. errorCode:%d\n", __LINE__, ret);
         }
         break;
+    }
+    return 0;
+}
+
+void GameServer::run_function(TCPSocket &con, std::string &out, int data_size)
+{
+    if (((data_size & BIT_COUNT) >> 20) == 4)
+    {
+        printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Change Function\n", __LINE__);
+        solve_add(con, out, data_size);
+    }
+    else if (((data_size & BIT_COUNT) >> 20) == 3)
+    {
+        printf("[GameServer][GameServer.cpp:%d][INFO]: In Data Query Function\n", __LINE__);
+        solve_query(con, out, data_size);
+    }
+    else if (((data_size & BIT_COUNT) >> 20) == 5)
+    {
+        printf("[GameServer][GameServer.cpp:%d][INFO]: In Move Function\n", __LINE__);
+        move_calculate(con, out, data_size);
+    }
+    else if (((data_size & BIT_COUNT) >> 20) == 7)
+    {
+        printf("[GameServer][GameServer.cpp:%d][INFO]: In DB Function\n", __LINE__);
+        transmit_db(con, out, data_size);
     }
 }
 

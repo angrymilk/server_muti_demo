@@ -24,7 +24,7 @@ public:
     }
     int run();
     int on_message(TCPSocket &con);
-    void get_one_code(TCPSocket &con);
+    void run_function(TCPSocket &con, string &out, int data_size);
     void solve(TCPSocket &con, std::string &data, int datasize);
     void send(char *data, int size);
     void send_db(char *data, int size, int uid);

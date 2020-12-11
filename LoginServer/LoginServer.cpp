@@ -13,13 +13,7 @@ LoginServer::LoginServer()
     server_config gate_conf;
     load_config("gate_server", gate_conf);
     m_con[0] = m_server->add_client_socket(server_conf.port, server_conf.ip, gate_conf.port, gate_conf.ip);
-    if (m_con[0] < 0)
-    {
-    }
-    else
-    {
-        m_gateserver_num = 1;
-    }
+    m_gateserver_num = 1;
 }
 
 int LoginServer::run()
