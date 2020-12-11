@@ -19,6 +19,7 @@ public:
     ThreadTask()
         : m_running(false)
     {
+        m_count = 0;
     }
 
     ~ThreadTask()
