@@ -51,6 +51,7 @@
         "map": "cpp",
         "memory_resource": "cpp",
         "optional": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "random": "cpp"
     }
 }

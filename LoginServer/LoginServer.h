@@ -19,7 +19,7 @@ public:
     int on_message(TCPSocket &con);
     void get_one_code(TCPSocket &con);
     void send_gate(char *data, int size, int uid);
-    void send_client(char *data, int size, int uid);
+    void send_client(const char *data_, int size, int uid);
     void register_(TCPSocket &con, std::string &data, int datasize);
 
 private:

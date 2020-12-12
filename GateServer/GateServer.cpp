@@ -92,9 +92,15 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         ClientMoveMessage req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
         uid = req.uid();
-        if (m_user_pass[uid] != req.password())
+        if (m_player_con.find(uid) == m_player_con.end() && con.get_type() == 1)
         {
-            printf("[GateServer][GateServer.cpp:%d][ERROR]:Check Uers Error \n", __LINE__);
+            m_con_client[uid] = con.get_fd();
+            m_player_con[uid] = m_con[uid % GATESERVER_NUM];
+        }
+        if (m_user_pass[uid] != req.password() && con.get_type() == 1)
+        {
+            printf("[GateServer][GateServer.cpp:%d][ERROR]:Check Uers Error  %d\n", __LINE__, uid);
+            cout << req.password() << "    " << m_user_pass[uid] << "\n";
             return;
         }
     }
@@ -103,11 +109,8 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         RegisterMessageGateBack req;
         req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, (datasize & ((1 << 20) - 1)) - 4);
         printf("Type == 2\n");
-        //if (m_user_pass.find(req.uid()) == m_user_pass.end())
         m_user_pass[req.uid()] = req.password();
-        //else
-        //    m_client_check[req.uid()] = true;
-        return;
+        cout << req.uid() << "   " << req.password() << "\n";
     }
     else
     {
@@ -121,7 +124,13 @@ void GateServer::transmit(TCPSocket &con, std::string &data, int datasize)
         m_player_con[uid] = m_con[uid % GATESERVER_NUM];
     }
 
-    con.send(std::bind(&GateServer::send, this, con, const_cast<char *>(data.c_str()), (datasize & ((1 << 20) - 1)), uid));
+    if (((datasize & BIT_COUNT) >> 20) == 5 && con.get_type() == 2)
+    {
+        board_send(con, const_cast<char *>(data.c_str()), (datasize & ((1 << 20) - 1)));
+        //con.send(std::bind(&GateServer::board_send, this, con, const_cast<char *>(data.c_str()), (datasize & ((1 << 20) - 1))));
+    }
+    else
+        send(con, const_cast<char *>(data.c_str()), (datasize & ((1 << 20) - 1)), uid);
 }
 
 void GateServer::send(TCPSocket &con, char *data, int size, int uid)
@@ -130,16 +139,19 @@ void GateServer::send(TCPSocket &con, char *data, int size, int uid)
     {
         m_server->m_sockets_map[m_player_con[uid]]->send_data(data, size);
     }
-    else
+    else if (con.get_type() == 2)
     {
-        if ((size & (1 << 30)))
-        {
-            for (unordered_map<int, int>::iterator iter = m_player_con.begin(); iter != m_player_con.end(); iter++)
-            {
-                m_server->m_sockets_map[m_con_client[uid]]->send_data(data, size);
-            }
-        }
-        else
-            m_server->m_sockets_map[m_con_client[uid]]->send_data(data, size);
+        m_server->m_sockets_map[m_con_client[uid]]->send_data(data, size);
+    }
+}
+
+void GateServer::board_send(TCPSocket &con, char *data, int size)
+{
+    for (unordered_map<int, int>::iterator iter = m_player_con.begin(); iter != m_player_con.end(); iter++)
+    {
+        if (!iter->first)
+            break;
+        //printf("+++    %d\n", m_con_client[iter->first]);
+        m_server->m_sockets_map[m_con_client[iter->first]]->send_data(data, size);
     }
 }

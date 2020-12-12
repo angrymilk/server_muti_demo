@@ -61,7 +61,7 @@ void LoginServer::register_(TCPSocket &con, std::string &data, int datasize)
     req.ParseFromArray(const_cast<char *>(data.c_str()) + MESSAGE_HEAD_SIZE, datasize);
     m_sql_server->query(("select user_id,user_password,port,user_ip from PlayerInfo where user_name='" + req.username() + "';").c_str());
     std::map<int, std::map<std::string, std::string>> password = m_sql_server->parser();
-    std::cout << password[0]["user_password"] << "    " << req.password() << "\n";
+    cout << "fuck    " << req.username() << "\n";
     m_fd_map[std::stoi(password[0]["user_id"])] = con.get_fd();
     if (password[0]["user_password"] == req.password())
         printf("[LoginServer][LoginServer.cpp:%d][INFO]:密码匹配成功\n", __LINE__);
@@ -75,14 +75,17 @@ void LoginServer::register_(TCPSocket &con, std::string &data, int datasize)
     res.set_uid(std::stoi(password[0]["user_id"]));
 
     char data_[COMMON_BUFFER_SIZE];
+    //std::unique_ptr<char[]> data_(new char[300]);
     MsgHead head;
     head.m_message_len = (MESSAGE_HEAD_SIZE + res.ByteSize()) | (1 << 20);
     int temp = MESSAGE_HEAD_SIZE + res.ByteSize();
     int codeLength = 0;
     head.encode(data_, codeLength);
     res.SerializePartialToArray(data_ + MESSAGE_HEAD_SIZE, res.ByteSize());
-    con.send(std::bind(&LoginServer::send_client, this, data_, temp, res.uid()));
+    //con.send(std::bind(&LoginServer::send_client, this, data_, temp, res.uid()));
+    send_client(data_, temp, res.uid());
 
+    char data_1[COMMON_BUFFER_SIZE];
     RegisterMessageGateBack res_gate;
     res_gate.set_password(password[0]["user_password"]);
     res_gate.set_uid(std::stoi(password[0]["user_id"]));
@@ -90,17 +93,21 @@ void LoginServer::register_(TCPSocket &con, std::string &data, int datasize)
     head_.m_message_len = (MESSAGE_HEAD_SIZE + res_gate.ByteSize()) | (1 << 21);
     int temp_ = MESSAGE_HEAD_SIZE + res_gate.ByteSize();
     int codeLength_ = 0;
-    head_.encode(data_ + temp, codeLength_);
-    res_gate.SerializePartialToArray(data_ + temp + MESSAGE_HEAD_SIZE, res_gate.ByteSize());
-    con.send(std::bind(&LoginServer::send_gate, this, data_ + temp, temp_, res_gate.uid()));
+    head_.encode(data_1, codeLength_);
+    res_gate.SerializePartialToArray(data_1 + MESSAGE_HEAD_SIZE, res_gate.ByteSize());
+    //con.send(std::bind(&LoginServer::send_gate, this, data_1, temp_, res_gate.uid()));
+    send_gate(data_1, temp_, res_gate.uid());
 };
 
-void LoginServer::send_client(char *data, int size, int uid)
+void LoginServer::send_client(const char *data, int size, int uid)
 {
-    m_server->m_sockets_map[m_fd_map[uid]]->send_data(data, size);
+    RegisterMessageBack res;
+    res.ParseFromArray(data + MESSAGE_HEAD_SIZE, size - 4);
+    m_server->m_sockets_map[m_fd_map[uid]]->send_data(const_cast<char *>(data), size);
 }
 
 void LoginServer::send_gate(char *data, int size, int uid)
 {
+    cout << "gate" << m_con[m_con_map[uid]] << "   " << uid << endl;
     m_server->m_sockets_map[m_con[m_con_map[uid]]]->send_data(data, size);
 }

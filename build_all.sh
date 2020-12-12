@@ -19,6 +19,9 @@ make clean && make -j8
 cd ${pwd}/GameServer
 make clean && make -j8
 
+cd ${pwd}/test
+make clean && make -j8
+
 cd ${pwd}/GateServer
 make clean && make -j8
 

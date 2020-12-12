@@ -20,6 +20,7 @@ public:
     void send(TCPSocket &con, char *data, int size, int uid);
     void transmit(TCPSocket &con, std::string &data, int datasize);
     bool check_user(int uid);
+    void board_send(TCPSocket &con, char *data, int size);
 
 private:
     std::shared_ptr<BaseServer> m_server;

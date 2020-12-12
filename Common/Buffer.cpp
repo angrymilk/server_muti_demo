@@ -24,6 +24,7 @@ int Buffer::copy_front()
         {
             //注意: 要使用memmove而不是memcpy
             //memcpy的__restrict__关键字不允许内存重叠
+            printf("copy_front\n");
             memmove(&m_recv_buffer[0], &m_recv_buffer[m_recv_head], size_t(m_recv_tail - m_recv_head));
             m_recv_tail -= m_recv_head;
             m_recv_head = 0;
@@ -66,7 +67,8 @@ int Buffer::get_one_code(char *data, size_t &size)
     {
         if (m_recv_tail == m_recv_buffer_size)
         {
-            memcpy(&m_recv_buffer[0], &m_recv_buffer[m_recv_head], size_t(buffer_data_size));
+            printf("若接收缓冲区内的数据不足一个code\n");
+            memmove(&m_recv_buffer[0], &m_recv_buffer[m_recv_head], size_t(buffer_data_size));
             m_recv_head = 0;
             m_recv_tail = buffer_data_size;
         }
@@ -92,10 +94,11 @@ int Buffer::get_one_code(char *data, size_t &size)
     }
 
     //若接收缓冲区内的数据不足一个code
-    if (buffer_data_size < (code_size & ((1 << 20) - 1)))
+    if ((m_recv_buffer_size - buffer_data_size) < (code_size & ((1 << 20) - 1)))
     {
         //并且数据已经存放到缓冲区尾了, 则移动数据到接收缓冲区头部
         //if (m_recv_tail == (int)sizeof(m_recv_buffer))
+        printf("若接收缓冲区内的数据不足一个code\n");
         if (m_recv_tail == m_recv_buffer_size)
         {
             memmove(&m_recv_buffer[0], &m_recv_buffer[m_recv_head], size_t(buffer_data_size));

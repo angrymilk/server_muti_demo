@@ -14,6 +14,12 @@ struct PlayerInfo
     shared_ptr<Player> player;
 };
 
+struct SendHelp
+{
+    char buf[1000];
+    int datasize;
+};
+
 class GameServer
 {
 public:
@@ -26,8 +32,8 @@ public:
     int on_message(TCPSocket &con);
     void run_function(TCPSocket &con, string &out, int data_size);
     void solve(TCPSocket &con, std::string &data, int datasize);
-    void send(char *data, int size);
-    void send_db(char *data, int size, int uid);
+    void send(SendHelp data, int uid);
+    void send_db(SendHelp data, int uid);
     void move_calculate(TCPSocket &con, std::string &data, int datasize);
 
     //转发gateserver发来的db增删请求

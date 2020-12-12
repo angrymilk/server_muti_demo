@@ -10,6 +10,7 @@ void BaseServer::do_pending_functions()
     }
     for (const Functor &functor : functors)
     {
+
         functor();
     }
     printf("[Common][BaseServer.cpp:%d][INFO]:Out do_pending_functions !!!\n", __LINE__);

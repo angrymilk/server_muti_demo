@@ -63,8 +63,8 @@ enum
 
 enum
 {
-    MAX_SS_PACKAGE_SIZE = 0x10000,
-    COMMON_BUFFER_SIZE = 0x10000, //2M大小，常规socket buffer缓存大小
+    MAX_SS_PACKAGE_SIZE = 0x100000,
+    COMMON_BUFFER_SIZE = 0x100000, //2M大小，常规socket buffer缓存大小
 };
 
 enum enmConnErrorCode
